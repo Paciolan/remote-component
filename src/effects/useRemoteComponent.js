@@ -1,0 +1,20 @@
+import { useEffect, useState } from "react";
+import { createLoadRemoteModule } from "../lib/loadRemoteModule";
+
+export const createUseRemoteComponent = args => {
+  const loadRemoteModule = createLoadRemoteModule(args);
+
+  const useRemoteComponent = url => {
+    const [{ loading, err, component }, setState] = useState({ loading: true });
+
+    useEffect(() => {
+      loadRemoteModule(url)
+        .then(module => setState({ loading: false, component: module.default }))
+        .catch(err => setState({ loading: false, err }));
+    }, []);
+
+    return [loading, err, component];
+  };
+
+  return useRemoteComponent;
+};
