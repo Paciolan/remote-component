@@ -1,0 +1,60 @@
+image: paciolanhub/alpine-node-dev:10.4.1
+
+variables:
+  LIB: pac-components-primitives
+  REPO_URL: gitlabdev.paciolan.info
+
+stages:
+  - build
+  - deploy
+
+Build & Test:
+  stage: build
+  tags:
+    - gitlabdev
+  except:
+    - tags
+  before_script:
+    # npm user authentication
+    - printf %"s\n" //registry.npmjs.org/:_authToken=$NPM_TOKEN email=$NPM_EMAIL > ~/.npmrc
+
+    # npm install
+    - npm install npm -g
+    - npm ci
+  script:
+    - npm run build
+    - npm run lint
+    - npm run test:coverage -- --colors
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - dist/
+      - node_modules/
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+
+Deploy:
+  stage: deploy
+  environment: NPM
+  tags:
+    - gitlabdev
+  only:
+    - master
+  except:
+    - tags
+  before_script:
+    # add git ssh key
+    - mkdir -p ~/.ssh
+    - "echo 'SSHD: ALL' >> /etc/hosts.allow"
+    - ssh-keyscan $SSH_KNOWN_HOSTS >> ~/.ssh/known_hosts
+    - eval $(ssh-agent -s)
+    - echo "$GIT_SSH_PRIV_KEY" | ssh-add -
+
+    # npm user authentication
+    - printf %"s\n" //registry.npmjs.org/:_authToken=$NPM_TOKEN email=$NPM_EMAIL > ~/.npmrc
+
+    # install dependencies
+    - npm install -g npm semantic-release-gitlab npm-publish-git-tag
+  script:
+    # publish
+    - semantic-release-gitlab
+    - npm-publish-git-tag
