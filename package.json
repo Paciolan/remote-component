@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "author": "Paciolan",
   "license": "",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlabdev.paciolan.info:development/library/javascript/remote-component.git"
+  },
   "scripts": {
     "build": "babel src --out-dir dist --ignore 'src/**/*.test.js' --source-maps",
     "clean": "rimraf coverage dist",
