@@ -12,6 +12,12 @@ Once loaded, there will either be an `err` or a `Component`. The rendering will 
 
 The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component. See documentation for examples.
 
+# Install
+
+```bash
+npm install @paciolan/remote-component
+```
+
 # Code
 
 Create `src/externals.js` to expose your dependencies and `src/components/RemoteComponent.js` to link the dependencies to `RemoteComponent`.
@@ -34,8 +40,8 @@ export const requires = name => globalDependencies[name];
 Export `RemoteComponent` with the `requires` available from your Web Application.
 
 ```javascript
-import { requires } from "../external";
 import { createRemoteComponent } from "@paciolan/remote-component";
+import { requires } from "../external";
 
 export default createRemoteComponent({ requires });
 ```
@@ -45,7 +51,6 @@ export default createRemoteComponent({ requires });
 For 99% of use-cases, the Basic Usage is recommmended.
 
 ```javascript
-import "core-js";
 import React from "react";
 import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
@@ -62,7 +67,6 @@ ReactDOM.render(<RemoteComponent remoteUrl={remoteUrl} {...props} />, node);
 In the case you need more control over the error or rendering, you can use a `render` `prop`.
 
 ```javascript
-import "core-js";
 import React from "react";
 import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
