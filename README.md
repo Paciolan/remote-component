@@ -56,10 +56,14 @@ import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
 const node = document.getElementById("app");
-const remoteUrl = "https://somewhere.amazonaws.com/components/my-component.js";
-const props = { a: 1, b: 2, c: 3 };
+const remoteUrl =
+  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
 
-ReactDOM.render(<RemoteComponent remoteUrl={remoteUrl} {...props} />, node);
+const HelloWorld = props => (
+  <RemoteComponent remoteUrl={remoteUrl} {...props} />
+);
+
+ReactDOM.render(<HelloWorld name="Paciolan" />, node);
 ```
 
 ## Render Props Usage
@@ -72,12 +76,16 @@ import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
 const node = document.getElementById("app");
-const remoteUrl = "https://somewhere.amazonaws.com/components/my-component.js";
-const props = { a: 1, b: 2, c: 3 };
+const remoteUrl =
+  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
+
+const HelloWorld = props => (
+  <RemoteComponent remoteUrl={remoteUrl} {...props} />
+);
 
 ReactDOM.render(
-  <RemoteComponent
-    remoteUrl={remoteUrl}
+  <HelloWorld
+    name="Paciolan"
     render={({ err, Component }) =>
       err ? <div>{err.toString()}</div> : <Component {...props} />
     }
