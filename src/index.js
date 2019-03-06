@@ -7,8 +7,8 @@ export { createUseRemoteComponent } from "./hooks/useRemoteComponent";
 export const createRemoteComponent = props => {
   const useRemoteComponent = createUseRemoteComponent(props);
 
-  const RemoteComponent = ({ remoteUrl, fallback, render, ...props }) => {
-    const [loading, err, Component] = useRemoteComponent(remoteUrl);
+  const RemoteComponent = ({ url, fallback, render, ...props }) => {
+    const [loading, err, Component] = useRemoteComponent(url);
 
     if (loading) {
       return fallback;
@@ -26,7 +26,7 @@ export const createRemoteComponent = props => {
   };
 
   RemoteComponent.propTypes = {
-    remoteUrl: propTypes.string.isRequired,
+    url: propTypes.string.isRequired,
     fallback: propTypes.object,
     render: propTypes.func
   };
