@@ -155,6 +155,16 @@ The `@paciolan/remote-component` library will be automatically deployed to `npm`
 
 Create unit tests to debug `RemoteComponent`.
 
+# Caveats
+
+There are a few things to be aware of when using `RemoteComponent`.
+
+- Calls to a `RemoteComponent` add an additional HTTP call. Be aware of this and use wisely.
+- Dependencies could be included twice. If a dependency is included in the library and also in the Web App, there could be unknown effects.
+- The external dependencies of the library and Web Application must match. This makes upgrading 3rd party libraries that have breaking changes more complex.
+- The `RemoteComponent` and web application's browser targets must match.
+- Debugging could be more complicated as source map support does not (yet) exist.
+
 # Contributors
 
 Joel Thoms (jthoms@paciolan.com)
