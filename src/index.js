@@ -1,6 +1,8 @@
 import propTypes from "prop-types";
 import React from "react";
-import { createUseRemoteComponent } from "./effects/useRemoteComponent";
+import { createUseRemoteComponent } from "./hooks/useRemoteComponent";
+
+export { createUseRemoteComponent } from "./hooks/useRemoteComponent";
 
 export const createRemoteComponent = props => {
   const useRemoteComponent = createUseRemoteComponent(props);

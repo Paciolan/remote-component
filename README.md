@@ -76,22 +76,42 @@ import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
 const node = document.getElementById("app");
-const remoteUrl =
-  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
 
 const HelloWorld = props => (
-  <RemoteComponent remoteUrl={remoteUrl} {...props} />
-);
-
-ReactDOM.render(
-  <HelloWorld
-    name="Paciolan"
+  <RemoteComponent
+    remoteUrl="https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js"
     render={({ err, Component }) =>
       err ? <div>{err.toString()}</div> : <Component {...props} />
     }
-  />,
-  node
+  />
 );
+
+ReactDOM.render(<HelloWorld name="Paciolan" />, node);
+```
+
+# React Hooks
+
+If you need more control, you can use `useRemoteComponent` React Hook.
+
+```javascript
+import { createUseRemoteComponent } from "@paciolan/remote-component";
+import { require } from "../external";
+
+const useRemoteComponent = createUseRemoteComponent({ require });
+
+const HelloWorld = ({ url }) => {
+  const [loading, err, Component] = useRemoteComponent(url);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (err != null) {
+    return <div>Unknown Error: {err.toString()}</div>;
+  }
+
+  return <Component {...props} />;
+};
 ```
 
 # Creating Remote Components
