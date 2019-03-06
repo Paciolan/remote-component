@@ -12,7 +12,7 @@ describe("createRemoteComponent", () => {
 
   test("RemoteComponent has propTypes", () => {
     const expected = {
-      remoteUrl: propTypes.string.isRequired,
+      url: propTypes.string.isRequired,
       fallback: propTypes.object,
       render: propTypes.func
     };
@@ -24,7 +24,7 @@ describe("createRemoteComponent", () => {
     jest.spyOn(React, "useState").mockImplementation(() => [{ loading: true }]);
     jest.spyOn(React, "useEffect").mockImplementation(() => {});
     const expected = "";
-    const actual = render(<RemoteComponent remoteUrl="http://valid.url" />);
+    const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
   });
 
@@ -34,7 +34,7 @@ describe("createRemoteComponent", () => {
     const expected = "Loading...";
     const fallback = <div>{expected}</div>;
     const actual = render(
-      <RemoteComponent remoteUrl="http://valid.url" fallback={fallback} />
+      <RemoteComponent url="http://valid.url" fallback={fallback} />
     );
     expect(actual.text()).toBe(expected);
   });
@@ -57,7 +57,7 @@ describe("createRemoteComponent", () => {
         </div>
       ));
     const actual = render(
-      <RemoteComponent remoteUrl="http://valid.url" render={mockRender} />
+      <RemoteComponent url="http://valid.url" render={mockRender} />
     );
     expect(actual.text()).toBe(expected);
   });
@@ -68,7 +68,7 @@ describe("createRemoteComponent", () => {
       .mockImplementation(() => [{ loading: false }]);
     jest.spyOn(React, "useEffect").mockImplementation(() => {});
     const expected = "Unknown Error: UNKNOWN";
-    const actual = render(<RemoteComponent remoteUrl="http://valid.url" />);
+    const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
   });
 
@@ -80,7 +80,7 @@ describe("createRemoteComponent", () => {
       ]);
     jest.spyOn(React, "useEffect").mockImplementation(() => {});
     const expected = "Unknown Error: Somethin aint right";
-    const actual = render(<RemoteComponent remoteUrl="http://valid.url" />);
+    const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
   });
 
@@ -91,7 +91,7 @@ describe("createRemoteComponent", () => {
     jest.spyOn(React, "useEffect").mockImplementation(() => {});
     const expected = "Message: SUCCESS!";
     const actual = render(
-      <RemoteComponent remoteUrl="http://valid.url" msg="SUCCESS!" />
+      <RemoteComponent url="http://valid.url" msg="SUCCESS!" />
     );
     expect(actual.text()).toBe(expected);
   });

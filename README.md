@@ -4,9 +4,9 @@ Dynamically load a React Component at runtime.
 
 # Algorithms
 
-`RemoteComponent` is a `React` component that takes a `remoteUrl` as a `prop`. The `remoteUrl` is loaded and parsed for a valid `React` component.
+`RemoteComponent` is a `React` component that takes a `url` as a `prop`. The `url` is loaded and parsed for a valid `React` component.
 
-While the `remoteUrl` is loading, a `fallback` will be rendered. This is a similar pattern to [`React.Suspense`](https://reactjs.org/blog/2018/10/23/react-v-16-6.html). If no `fallback` is provided, then nothing will be rendered during loading.
+While the `url` is loading, a `fallback` will be rendered. This is a similar pattern to [`React.Suspense`](https://reactjs.org/blog/2018/10/23/react-v-16-6.html). If no `fallback` is provided, then nothing will be rendered during loading.
 
 Once loaded, there will either be an `err` or a `Component`. The rendering will first be handled by the `render` callback function. If there is no `render` callback and `err` exists, a generic message will be shown.
 
@@ -56,12 +56,10 @@ import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
 const node = document.getElementById("app");
-const remoteUrl =
+const url =
   "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
 
-const HelloWorld = props => (
-  <RemoteComponent remoteUrl={remoteUrl} {...props} />
-);
+const HelloWorld = props => <RemoteComponent url={url} {...props} />;
 
 ReactDOM.render(<HelloWorld name="Paciolan" />, node);
 ```
@@ -79,7 +77,7 @@ const node = document.getElementById("app");
 
 const HelloWorld = props => (
   <RemoteComponent
-    remoteUrl="https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js"
+    url="https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js"
     render={({ err, Component }) =>
       err ? <div>{err.toString()}</div> : <Component {...props} />
     }
@@ -97,9 +95,11 @@ If you need more control, you can use `useRemoteComponent` React Hook.
 import { createUseRemoteComponent } from "@paciolan/remote-component";
 import { require } from "../external";
 
+const url =
+  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
 const useRemoteComponent = createUseRemoteComponent({ require });
 
-const HelloWorld = ({ url }) => {
+const HelloWorld = props => {
   const [loading, err, Component] = useRemoteComponent(url);
 
   if (loading) {
