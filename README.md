@@ -89,6 +89,31 @@ const HelloWorld = props => (
 ReactDOM.render(<HelloWorld name="Paciolan" />, node);
 ```
 
+# React Hooks
+
+If you need more control, you can use `useRemoteComponent` React Hook.
+
+```javascript
+import { createUseRemoteComponent } from "@paciolan/remote-component";
+import { require } from "../external";
+
+const useRemoteComponent = createUseRemoteComponent({ require });
+
+const HelloWorld = ({ url }) => {
+  const [loading, err, Component] = useRemoteComponent(url);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (err != null) {
+    return <div>Unknown Error: {err.toString()}</div>;
+  }
+
+  return <Component {...props} />;
+};
+```
+
 # Creating Remote Components
 
 ## webpack.config.js
