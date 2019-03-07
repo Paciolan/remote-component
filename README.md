@@ -1,4 +1,4 @@
-# Remote Component
+# Remote Component [![pipeline status](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/badges/master/pipeline.svg)](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/commits/master) [![coverage report](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/badges/master/coverage.svg)](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/commits/master)
 
 Dynamically load a React Component at runtime.
 
