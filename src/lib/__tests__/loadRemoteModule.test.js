@@ -8,11 +8,13 @@ jest.mock("axios", () => ({
 describe("lib/loadRemoteModule", () => {
   const invalidModule = "'";
   const validModule = 'Object.assign(exports, { default: () => "SUCCESS!" })';
+  const requiresModules =
+    'Object.assign(exports, { default: () => require("test") })';
 
   const mockFetcher = url =>
-    url === "http://valid.url"
-      ? Promise.resolve(validModule)
-      : Promise.resolve(invalidModule);
+    url === "http://valid.url" ? Promise.resolve(validModule)
+    : url === "http://requires.url" ? Promise.resolve(requiresModules)
+    : Promise.resolve(invalidModule); // prettier-ignore
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,5 +49,15 @@ describe("lib/loadRemoteModule", () => {
     await loadRemoteModule(expected);
     expect(axios.get).toBeCalledWith(expected);
     expect(axios.get).toBeCalledTimes(1);
+  });
+
+  test("requires defaults to error", async () => {
+    const expected = Error(
+      "Could not require 'test'. The 'requires' function was not provided."
+    );
+    const loadRemoteModule = createLoadRemoteModule({ fetcher: mockFetcher });
+    const module = await loadRemoteModule("http://requires.url");
+    const actual = () => module.default();
+    expect(actual).toThrowError(expected);
   });
 });
