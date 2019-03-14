@@ -12,7 +12,7 @@
   "scripts": {
     "build": "babel src --out-dir dist --ignore 'src/**/*.test.js' --source-maps",
     "clean": "rimraf coverage dist",
-    "cm": "git-cz",
+    "cz": "git-cz",
     "rebuild": "npm run clean && npm run build",
     "test": "jest",
     "test:changed": "npm run test -- --changedSince HEAD",
