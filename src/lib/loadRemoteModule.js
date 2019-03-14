@@ -1,7 +1,6 @@
-import axios from "axios";
 import memoize from "./memoize";
+import xmlHttpRequestFetcher from "./xmlHttpRequestFetcher";
 
-const defaultFetcher = url => axios.get(url).then(response => response.data);
 const defaultRequires = name => {
   throw new Error(
     `Could not require '${name}'. The 'requires' function was not provided.`
@@ -10,7 +9,7 @@ const defaultRequires = name => {
 
 export const createLoadRemoteModule = ({
   requires = defaultRequires,
-  fetcher = defaultFetcher
+  fetcher = xmlHttpRequestFetcher
 } = {}) =>
   memoize(url =>
     fetcher(url).then(data => {
