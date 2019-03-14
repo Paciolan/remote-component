@@ -28,7 +28,6 @@
     "@babel/preset-react": "^7.0.0",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
-    "babel-loader": "^8.0.5",
     "babel-polyfill": "^6.26.0",
     "cz-conventional-changelog": "^2.1.0",
     "enzyme": "^3.9.0",
