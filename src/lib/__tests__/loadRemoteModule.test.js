@@ -1,21 +1,21 @@
 import { createLoadRemoteModule } from "../loadRemoteModule";
-import axios from "axios";
+import xmlHttpRequestFetcher from "../xmlHttpRequestFetcher";
 
-jest.mock("axios", () => ({
-  get: jest.fn().mockImplementation(() => Promise.resolve({ data: "" }))
-}));
+const invalidModule = "'";
+const validModule = 'Object.assign(exports, { default: () => "SUCCESS!" })';
+const requiresModules =
+  'Object.assign(exports, { default: () => require("test") })';
 
-describe("lib/loadRemoteModule", () => {
-  const invalidModule = "'";
-  const validModule = 'Object.assign(exports, { default: () => "SUCCESS!" })';
-  const requiresModules =
-    'Object.assign(exports, { default: () => require("test") })';
-
-  const mockFetcher = url =>
+const mockFetcher = url =>
     url === "http://valid.url" ? Promise.resolve(validModule)
     : url === "http://requires.url" ? Promise.resolve(requiresModules)
     : Promise.resolve(invalidModule); // prettier-ignore
 
+jest.mock("../xmlHttpRequestFetcher", () =>
+  jest.fn().mockImplementation(url => mockFetcher(url))
+);
+
+describe("lib/loadRemoteModule", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -43,12 +43,12 @@ describe("lib/loadRemoteModule", () => {
     return expect(actual).toBe(expected);
   });
 
-  test("fetcher defaults to axios", async () => {
+  test("fetcher defaults to xmlHttpRequestFetcher", async () => {
     const expected = "http://valid.url";
     const loadRemoteModule = createLoadRemoteModule();
     await loadRemoteModule(expected);
-    expect(axios.get).toBeCalledWith(expected);
-    expect(axios.get).toBeCalledTimes(1);
+    expect(xmlHttpRequestFetcher).toBeCalledWith(expected);
+    expect(xmlHttpRequestFetcher).toBeCalledTimes(1);
   });
 
   test("requires defaults to error", async () => {
