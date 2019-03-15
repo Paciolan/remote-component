@@ -11,7 +11,7 @@ export const createUseRemoteComponent = args => {
       loadRemoteModule(url)
         .then(module => setState({ loading: false, component: module.default }))
         .catch(err => setState({ loading: false, err }));
-    }, []);
+    }, [url]);
 
     return [loading, err, component];
   };
