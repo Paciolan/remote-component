@@ -20,7 +20,9 @@
     "lint": "eslint .",
     "watch": "npm run build -- --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@paciolan/remote-module-loader": "^2.0.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",

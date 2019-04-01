@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createLoadRemoteModule } from "../lib/loadRemoteModule";
+import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
 export const createUseRemoteComponent = args => {
   const loadRemoteModule = createLoadRemoteModule(args);
