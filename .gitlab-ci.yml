@@ -1,8 +1,5 @@
 image: paciolanhub/alpine-node-dev:10.15.3c
 
-variables:
-  REPO_URL: gitlabdev.paciolan.info
-
 stages:
   - build
   - deploy
@@ -14,7 +11,6 @@ Build & Test:
   except:
     - tags
   before_script:
-    # npm install
     - npm ci
   script:
     - npm run build
@@ -24,7 +20,6 @@ Build & Test:
     expire_in: 1 hour
     paths:
       - dist/
-      - node_modules/
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
 
 Deploy:
