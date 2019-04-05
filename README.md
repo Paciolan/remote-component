@@ -1,102 +1,98 @@
-# Remote Component [![pipeline status](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/badges/master/pipeline.svg)](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/commits/master) [![coverage report](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/badges/master/coverage.svg)](https://gitlabdev.paciolan.info/development/library/javascript/remote-component/commits/master)
+# Remote Component ![coverage:100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 
-Dynamically load a React Component at runtime.
+Remote Component dynamically loads a React Component from a URL.
 
-# Algorithms
+## Requirements
 
-`RemoteComponent` is a `React` component that takes a `url` as a `prop`. The `url` is loaded and parsed for a valid `React` component.
+React 16.8 is required because this component uses React Hooks.
 
-While the `url` is loading, a `fallback` will be rendered. This is a similar pattern to [`React.Suspense`](https://reactjs.org/blog/2018/10/23/react-v-16-6.html). If no `fallback` is provided, then nothing will be rendered during loading.
-
-Once loaded, there will either be an `err` or a `Component`. The rendering will first be handled by the `render` callback function. If there is no `render` callback and `err` exists, a generic message will be shown.
-
-The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component. See documentation for examples.
-
-# Install
+## Install
 
 ```bash
 npm install @paciolan/remote-component
 ```
 
-# Code
+## Code
 
-Create `src/externals.js` to expose your dependencies and `src/components/RemoteComponent.js` to link the dependencies to `RemoteComponent`.
+Remote Components will require some dependencies to be injected into them. At the minimum, we'll be injecting the React dependency.
 
-## src/externals.js
+Create `src/externals.js`, this will hold your dependencies. Next, create `src/components/RemoteComponent.js` to link the dependencies to `RemoteComponent`.
 
-Include any dependencies your web application will expose to the `RemoteComponents`. Expose a function called `requires`.
+### src/externals.js
+
+Include dependencies your web application to inject them into the `RemoteComponent`. Expose a function called `requires`.
 
 ```javascript
-const globalDependencies = {
+const externals = {
   react: require("react"),
   "styled-components": require("styled-components")
 };
 
-export const requires = name => globalDependencies[name];
+export const requires = name => externals[name];
 ```
 
-## src/components/RemoteComponent
+### src/components/RemoteComponent
 
-Export `RemoteComponent` with the `requires` available from your Web Application.
+Export `RemoteComponent` with the `requires` from `src/externals.js`. This will inject the dependencies into the `RemoteComponent`.
 
 ```javascript
 import { createRemoteComponent } from "@paciolan/remote-component";
-import { requires } from "../external";
+import { requires } from "../externals";
 
-export default createRemoteComponent({ requires });
+const RemoteComponent = createRemoteComponent({ requires });
+
+export default RemoteComponent;
 ```
 
-## Basic Usage
+### Basic Usage
 
-For 99% of use-cases, the Basic Usage is recommmended.
+For 99% of use-cases, the Basic Usage is enough.
 
 ```javascript
 import React from "react";
 import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
-const node = document.getElementById("app");
-const url =
-  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
+const element = document.getElementById("app");
+const url = "https://fake.url/components/hello-world.js";
 
 const HelloWorld = props => <RemoteComponent url={url} {...props} />;
 
-ReactDOM.render(<HelloWorld name="Paciolan" />, node);
+ReactDOM.render(<HelloWorld name="Paciolan" />, element);
 ```
 
-## Render Props Usage
+### Render Props Usage
 
-In the case you need more control over the error or rendering, you can use a `render` `prop`.
+In the case you need more control over the error or rendering, you can use a `render` prop.
 
 ```javascript
 import React from "react";
 import ReactDOM from "react-dom";
 import RemoteComponent from "./components/RemoteComponent";
 
-const node = document.getElementById("app");
+const element = document.getElementById("app");
 
 const HelloWorld = props => (
   <RemoteComponent
-    url="https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js"
+    url="https://fake.url/components/hello-world.js"
     render={({ err, Component }) =>
       err ? <div>{err.toString()}</div> : <Component {...props} />
     }
   />
 );
 
-ReactDOM.render(<HelloWorld name="Paciolan" />, node);
+ReactDOM.render(<HelloWorld name="Paciolan" />, element);
 ```
 
-# React Hooks
+## React Hooks
 
-If you need more control, you can use `useRemoteComponent` React Hook.
+If you need even more control, you can use `useRemoteComponent` React Hook.
 
 ```javascript
 import { createUseRemoteComponent } from "@paciolan/remote-component";
-import { require } from "../external";
+import { require } from "../externals";
 
-const url =
-  "https://s3-us-west-2.amazonaws.com/paciolan-public-development/components/hello-world.js";
+const url = "https://fake.url/components/hello-world.js";
 const useRemoteComponent = createUseRemoteComponent({ require });
 
 const HelloWorld = props => {
@@ -114,11 +110,11 @@ const HelloWorld = props => {
 };
 ```
 
-# Creating Remote Components
+## Creating Remote Components
 
-## webpack.config.js
+### webpack.config.js
 
-The `output.libraryTarget` of the `RemoteComponent` must be set to `commonjs`.
+The `libraryTarget` of the `RemoteComponent` must be set to `commonjs`.
 
 Any dependencies that will not be bundled with the library must be added as an `external`.
 
@@ -135,25 +131,25 @@ module.exports = {
 };
 ```
 
-# package.json
+## package.json
 
 Set `main` to the webpacked entrypoint. This will probably be `dist/main.js`.
 
-Any dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` and `peerDependencies`.
+Any dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` (so they are available during development) and `peerDependencies` (so the upstream package knows it is responsible for installation).
 
 ```javascript
 {
   "main": "dist/main.js",
   "devDependencies": {
-    "react": "^16.8.2"
+    "react": "^16.8"
   },
   "peerDependencies": {
-    "react": "^16.8.2"
+    "react": "^16.8"
   }
 }
 ```
 
-# src/index.js
+## src/index.js
 
 Create `src/index.js` and expose your component as the `default`.
 
@@ -167,15 +163,21 @@ const RemoteComponent = () => {
 export default RemoteComponent;
 ```
 
-# Deployment
+## How it works
 
-The `@paciolan/remote-component` library will be automatically deployed to `npm` when code is merged into `master` during the `ci/cd` process.
+The `RemoteComponent` React Component takes a `url` as a prop. The `url` is loaded and processed. This file must be a valid CommonJS Module that exports the component as `default`.
 
-# Debugging
+While the `url` is loading, the `fallback` will be rendered. This is a similar pattern to [`React.Suspense`](https://reactjs.org/blog/2018/10/23/react-v-16-6.html). If no `fallback` is provided, then nothing will be rendered while loading.
+
+Once loaded, there will either be an `err` or a `Component`. The rendering will first be handled by the `render` callback function. If there is no `render` callback and `err` exists, a generic message will be shown.
+
+The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component.
+
+## Debugging
 
 Create unit tests to debug `RemoteComponent`.
 
-# Caveats
+## Caveats
 
 There are a few things to be aware of when using `RemoteComponent`.
 
@@ -185,8 +187,8 @@ There are a few things to be aware of when using `RemoteComponent`.
 - The `RemoteComponent` and web application's browser targets must match.
 - Debugging could be more complicated as source map support does not (yet) exist.
 
-# Contributors
+## Contributors
 
-Joel Thoms (jthoms@paciolan.com)
+Joel Thoms (https://twitter.com/joelnet)
 
 Icons made by [Freepik](https://www.freepik.com) from [www.flaticon.com](https://www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0)
