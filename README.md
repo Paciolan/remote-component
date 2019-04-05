@@ -1,6 +1,31 @@
 # Remote Component ![coverage:100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 
-Remote Component dynamically loads a React Component from a URL.
+Dynamically load a React Component from a URL.
+
+## Quick Look
+
+Use Remote Components the same way you use a local React Component.
+
+```javascript
+// Local
+const HelloWorld = ({ name }) => <div>Hello {name}!</div>;
+
+// Remote
+const RemoteHelloWorld = ({ name }) => (
+  <RemoteComponent
+    url="https://fake.url/components/hello-world.js"
+    name={name}
+  />
+);
+
+// Same Same but Different
+const Container = (
+  <>
+    <HelloWorld name="Local" />
+    <RemoteHelloWorld name="Remote" />
+  </>
+);
+```
 
 ## Requirements
 
@@ -18,9 +43,11 @@ Remote Components will require some dependencies to be injected into them. At th
 
 Create `src/externals.js`, this will hold your dependencies. Next, create `src/components/RemoteComponent.js` to link the dependencies to `RemoteComponent`.
 
-### src/externals.js
+### `src/externals.js`
 
-Include dependencies your web application to inject them into the `RemoteComponent`. Expose a function called `requires`.
+The web application can include dependencies and inject them into the `RemoteComponent`.
+
+Create a the file `src/externals.js` and expose a function called `requires`.
 
 ```javascript
 const externals = {
@@ -31,7 +58,7 @@ const externals = {
 export const requires = name => externals[name];
 ```
 
-### src/components/RemoteComponent
+### `src/components/RemoteComponent.js`
 
 Export `RemoteComponent` with the `requires` from `src/externals.js`. This will inject the dependencies into the `RemoteComponent`.
 
@@ -112,7 +139,21 @@ const HelloWorld = props => {
 
 ## Creating Remote Components
 
-### webpack.config.js
+### `src/index.js`
+
+Create `src/index.js` and expose your component as the `default`.
+
+```javascript
+import React from "react";
+
+const RemoteComponent = () => {
+  return <div>Hello Remote World!</div>;
+};
+
+export default RemoteComponent;
+```
+
+### `webpack.config.js`
 
 The `libraryTarget` of the `RemoteComponent` must be set to `commonjs`.
 
@@ -131,11 +172,11 @@ module.exports = {
 };
 ```
 
-## package.json
+## `package.json`
 
 Set `main` to the webpacked entrypoint. This will probably be `dist/main.js`.
 
-Any dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` (so they are available during development) and `peerDependencies` (so the upstream package knows it is responsible for installation).
+Dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` (so they are available during development) and `peerDependencies` (so the upstream package knows it is responsible for installation).
 
 ```javascript
 {
@@ -149,20 +190,6 @@ Any dependencies you have marked as `external` should be removed from `dependenc
 }
 ```
 
-## src/index.js
-
-Create `src/index.js` and expose your component as the `default`.
-
-```javascript
-import React from "react";
-
-const RemoteComponent = () => {
-  return <div>Hello Remote World!</div>;
-};
-
-export default RemoteComponent;
-```
-
 ## How it works
 
 The `RemoteComponent` React Component takes a `url` as a prop. The `url` is loaded and processed. This file must be a valid CommonJS Module that exports the component as `default`.
@@ -172,10 +199,6 @@ While the `url` is loading, the `fallback` will be rendered. This is a similar p
 Once loaded, there will either be an `err` or a `Component`. The rendering will first be handled by the `render` callback function. If there is no `render` callback and `err` exists, a generic message will be shown.
 
 The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component.
-
-## Debugging
-
-Create unit tests to debug `RemoteComponent`.
 
 ## Caveats
 
