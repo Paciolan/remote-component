@@ -1,15 +1,11 @@
 {
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "useBuiltIns": "entry",
-        "targets": {
-          "browsers": "last 2 versions,> 1%,ie >= 11"
-        }
-      }
-    ],
-    "@babel/preset-react"
-  ],
-  "retainLines": true
+  "presets": ["@babel/preset-react"],
+  "plugins": [["@babel/plugin-transform-modules-commonjs", { "loose": true }]],
+  "env": {
+    "production": {
+      "plugins": [
+        ["transform-react-remove-prop-types", { "removeImport": true }]
+      ]
+    }
+  }
 }

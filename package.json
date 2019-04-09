@@ -1,6 +1,6 @@
 {
   "name": "@paciolan/remote-component",
-  "version": "1.0.0",
+  "version": "1.0.0-semantic-versioning",
   "description": "",
   "main": "dist/index.js",
   "author": "Paciolan",
@@ -10,7 +10,7 @@
     "url": "git@gitlabdev.paciolan.info:development/library/javascript/remote-component.git"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --ignore 'src/**/*.test.js' --source-maps",
+    "build": "npm run clean && NODE_ENV=production babel src --out-dir dist --ignore 'src/**/*.test.js'",
     "clean": "rimraf coverage dist",
     "cz": "git-cz",
     "rebuild": "npm run clean && npm run build",
@@ -30,6 +30,7 @@
     "@babel/preset-react": "^7.0.0",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "babel-polyfill": "^6.26.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.11.2",
