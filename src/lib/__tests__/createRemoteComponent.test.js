@@ -1,6 +1,6 @@
 import propTypes from "prop-types";
 import React from "react";
-import { createRemoteComponent } from "../index";
+import { createRemoteComponent } from "../createRemoteComponent";
 import { render } from "enzyme";
 
 describe("createRemoteComponent", () => {
