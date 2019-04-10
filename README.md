@@ -37,38 +37,98 @@ React 16.8 is required because this component uses React Hooks.
 npm install @paciolan/remote-component
 ```
 
-## Code
+## Webpack
+
+Using Webpack is the recommended and easiest way to use `RemoteComponent`.
+
+Create a file in the root of your web application called `remote-component.config.js`.
+
+```javascript
+/**
+ * remote-component.config.js
+ *
+ * Dependencies for Remote Components
+ */
+
+module.exports = {
+  resolve: {
+    react: require("react")
+  }
+};
+```
+
+Add a Webpack `alias` so the RemoteComponent can load this file.
+
+```javascript
+/**
+ * webpack.config.js
+ */
+
+module.exports = {
+  resolve: {
+    alias: {
+      "remote-component.config.js": __dirname + "/remote-component.config.js"
+    }
+  }
+};
+```
+
+Now you are ready to use `RemoteComponent`!
+
+```javascript
+import React from "react";
+import ReactDOM from "react-dom";
+import { RemoteComponent } from "@paciolan/remote-component";
+
+const element = document.getElementById("app");
+const url = "https://fake.url/components/hello-world.js";
+
+const HelloWorld = props => <RemoteComponent url={url} {...props} />;
+
+ReactDOM.render(<HelloWorld name="Paciolan" />, element);
+```
+
+## Manual Configuration
 
 Remote Components will require some dependencies to be injected into them. At the minimum, we'll be injecting the React dependency.
 
-Create `src/externals.js`, this will hold your dependencies. Next, create `src/components/RemoteComponent.js` to link the dependencies to `RemoteComponent`.
+### `remote-component.config.js`
 
-### `src/externals.js`
+The web application can include dependencies and inject them into the `RemoteComponent`. At a minimum, you will probably need the `react` dependency.
 
-The web application can include dependencies and inject them into the `RemoteComponent`.
-
-Create a the file `src/externals.js` and expose a function called `requires`.
+Create a the file `remote-component.config.js` in the root of the web application.
 
 ```javascript
-const externals = {
-  react: require("react"),
-  "styled-components": require("styled-components")
-};
+/**
+ * remote-component.config.js
+ *
+ * Dependencies for Remote Components
+ */
 
-export const requires = name => externals[name];
+module.exports = {
+  resolve: {
+    react: require("react")
+  }
+};
 ```
 
 ### `src/components/RemoteComponent.js`
 
-Export `RemoteComponent` with the `requires` from `src/externals.js`. This will inject the dependencies into the `RemoteComponent`.
+Export `RemoteComponent` with the `requires` from `remote-component.config.js`. This will inject the dependencies into the `RemoteComponent`.
 
 ```javascript
-import { createRemoteComponent } from "@paciolan/remote-component";
-import { requires } from "../externals";
+/*
+ * src/components/RemoteComponent.js
+ */
 
-const RemoteComponent = createRemoteComponent({ requires });
+import {
+  createRemoteComponent,
+  createRequires
+} from "@paciolan/remote-component";
+import { resolve } from "../../remote-component.config.js";
 
-export default RemoteComponent;
+const requires = createRequires(resolve);
+export const RemoteComponent = createRemoteComponent({ requires });
 ```
 
 ### Basic Usage
@@ -78,7 +138,7 @@ For 99% of use-cases, the Basic Usage is enough.
 ```javascript
 import React from "react";
 import ReactDOM from "react-dom";
-import RemoteComponent from "./components/RemoteComponent";
+import { RemoteComponent } from "./components/RemoteComponent";
 
 const element = document.getElementById("app");
 const url = "https://fake.url/components/hello-world.js";
@@ -95,7 +155,7 @@ In the case you need more control over the error or rendering, you can use a `re
 ```javascript
 import React from "react";
 import ReactDOM from "react-dom";
-import RemoteComponent from "./components/RemoteComponent";
+import { RemoteComponent } from "./components/RemoteComponent";
 
 const element = document.getElementById("app");
 
@@ -116,10 +176,14 @@ ReactDOM.render(<HelloWorld name="Paciolan" />, element);
 If you need even more control, you can use `useRemoteComponent` React Hook.
 
 ```javascript
-import { createUseRemoteComponent } from "@paciolan/remote-component";
-import { require } from "../externals";
+import {
+  createRequires,
+  createUseRemoteComponent
+} from "@paciolan/remote-component";
+import { resolve } from "../../remote-component.config.js";
 
 const url = "https://fake.url/components/hello-world.js";
+const requires = createRequires(resolve);
 const useRemoteComponent = createUseRemoteComponent({ require });
 
 const HelloWorld = props => {
@@ -136,6 +200,16 @@ const HelloWorld = props => {
   return <Component {...props} />;
 };
 ```
+
+## Prop Tables
+
+### `RemoteComponent`
+
+| Property   | Type        | Required | Description                                 |
+| ---------- | ----------- | :------: | ------------------------------------------- |
+| `url`      | `String`    |    ✔️    | Location of remote component bundle         |
+| `fallback` | `Component` |          | Component to render while loading           |
+| `render`   | `render`    |          | Render props function is called when exists |
 
 ## Creating Remote Components
 
