@@ -1,4 +1,6 @@
 /.vscode
+/coverage
+/media
 /src
 __tests__
 .babelrc
