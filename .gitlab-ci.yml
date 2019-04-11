@@ -1,7 +1,7 @@
 image: paciolanhub/alpine-node-dev:10.15.3c
 
 variables:
-  GITHUB_URL: git@github.com:Paciolan/remote-component-starter.git
+  GITHUB_URL: git@github.com:Paciolan/remote-component.git
 
 stages:
   - build
