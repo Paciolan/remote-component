@@ -1,5 +1,8 @@
 image: paciolanhub/alpine-node-dev:10.15.3c
 
+variables:
+  GITHUB_URL: git@github.com:Paciolan/remote-component-starter.git
+
 stages:
   - build
   - deploy
@@ -39,4 +42,8 @@ Deploy:
   script:
     # publish
     - semantic-release-gitlab
+
+    # set repository to github for npm link
+    - node -e "require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), {repository:{type:'git',url:'$GITHUB_URL'}}), null, 2), 'utf8')"
+
     - npm-publish-git-tag
