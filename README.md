@@ -1,5 +1,7 @@
 # Remote Component ![coverage:100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 
+![Planet with transmitter](https://raw.githubusercontent.com/Paciolan/remote-component/master/media/logo-small.png)
+
 Dynamically load a React Component from a URL.
 
 ## Quick Look
