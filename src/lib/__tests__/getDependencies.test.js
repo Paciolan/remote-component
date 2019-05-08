@@ -17,7 +17,7 @@ describe("lib/getDependencies", () => {
     beforeAll(() => {
       fs.writeFileSync(
         remoteComponentConfigPath,
-        'module.exports = { resolve: { jest: require("jest") } }'
+        'module.exports = { resolve: { jest: require("jest") } };'
       );
     });
 
