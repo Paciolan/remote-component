@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@gitlabdev.paciolan.info:development/library/javascript/remote-component.git"
+    "url": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git"
   },
   "scripts": {
     "build": "npm run clean && NODE_ENV=production babel src --out-dir dist --ignore 'src/**/*.test.js'",
