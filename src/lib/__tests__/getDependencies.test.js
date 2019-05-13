@@ -1,3 +1,4 @@
+/* eslint-env node */
 import fs from "fs";
 import { getDependencies } from "../getDependencies";
 import { join } from "path";
