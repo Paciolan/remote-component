@@ -15,7 +15,7 @@ const HelloWorld = ({ name }) => <div>Hello {name}!</div>;
 // Remote
 const RemoteHelloWorld = ({ name }) => (
   <RemoteComponent
-    url="https://fake.url/components/hello-world.js"
+    url="https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"
     name={name}
   />
 );
@@ -83,7 +83,7 @@ import ReactDOM from "react-dom";
 import { RemoteComponent } from "@paciolan/remote-component";
 
 const element = document.getElementById("app");
-const url = "https://fake.url/components/hello-world.js";
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 
 const HelloWorld = props => <RemoteComponent url={url} {...props} />;
 
@@ -143,7 +143,7 @@ import ReactDOM from "react-dom";
 import { RemoteComponent } from "./components/RemoteComponent";
 
 const element = document.getElementById("app");
-const url = "https://fake.url/components/hello-world.js";
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 
 const HelloWorld = props => <RemoteComponent url={url} {...props} />;
 
@@ -160,10 +160,11 @@ import ReactDOM from "react-dom";
 import { RemoteComponent } from "./components/RemoteComponent";
 
 const element = document.getElementById("app");
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 
-const HelloWorld = props => (
+const HelloWorld = props =>
   <RemoteComponent
-    url="https://fake.url/components/hello-world.js"
+    url={url}
     render={({ err, Component }) =>
       err ? <div>{err.toString()}</div> : <Component {...props} />
     }
@@ -184,7 +185,7 @@ import {
 } from "@paciolan/remote-component";
 import { resolve } from "../../remote-component.config.js";
 
-const url = "https://fake.url/components/hello-world.js";
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 const requires = createRequires(resolve);
 const useRemoteComponent = createUseRemoteComponent({ require });
 
