@@ -1,16 +1,17 @@
-import fs from "fs";
-import { join } from "path";
+const cannotFindModule = err =>
+  err &&
+  typeof err.message === "string" &&
+  err.message.indexOf("Cannot find module") > -1;
 
 export const getDependencies = () => {
-  const filepath = join(process.cwd(), "./remote-component.config.js");
-
-  if (fs.existsSync(filepath)) {
-    return require(filepath).resolve;
-  }
-
   try {
-    require("remote-component.config.js").resolve;
+    return require("remote-component.config.js").resolve;
   } catch (err) {
+    // istanbul ignore next: This is just too impossible to test
+    if (!cannotFindModule(err)) {
+      throw err;
+    }
+
     return {};
   }
 };
