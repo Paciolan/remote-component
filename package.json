@@ -9,6 +9,16 @@
     "type": "git",
     "url": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git"
   },
+  "release": {
+    "branch": "master",
+    "repositoryUrl": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git",
+    "tagFormat": "${version}",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm"
+    ]
+  },
   "scripts": {
     "build": "npm run clean && NODE_ENV=production babel src --out-dir dist --ignore 'src/**/*.test.js'",
     "clean": "rimraf coverage dist",

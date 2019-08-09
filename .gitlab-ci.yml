@@ -9,8 +9,6 @@ stages:
 
 Build & Test:
   stage: build
-  tags:
-    - gitlabdev
   except:
     - tags
   before_script:
@@ -28,8 +26,6 @@ Build & Test:
 Deploy:
   stage: deploy
   environment: NPM
-  tags:
-    - gitlabdev
   only:
     - master
   except:
@@ -40,10 +36,8 @@ Deploy:
     - eval $(ssh-agent -s)
     - echo "$GIT_SSH_PRIV_KEY" | ssh-add -
   script:
-    # publish
-    - semantic-release-gitlab
-
     # set repository to github for npm link
     - node -e "require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), {repository:{type:'git',url:'$GITHUB_URL'}}), null, 2), 'utf8')"
 
-    - npm-publish-git-tag --access public
+    # publish
+    - npx semantic-release
