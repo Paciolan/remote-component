@@ -187,7 +187,7 @@ import { resolve } from "../../remote-component.config.js";
 
 const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 const requires = createRequires(resolve);
-const useRemoteComponent = createUseRemoteComponent({ require });
+const useRemoteComponent = createUseRemoteComponent({ requires });
 
 const HelloWorld = props => {
   const [loading, err, Component] = useRemoteComponent(url);
