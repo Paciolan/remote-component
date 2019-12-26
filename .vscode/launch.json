@@ -9,13 +9,20 @@
       "request": "launch",
       "name": "Jest Tests",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["-inspector"],
+      "args": [
+        "-inspector"
+      ],
       "preLaunchTask": "build",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
       "sourceMaps": true,
       "smartStep": true,
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      }
     }
   ]
 }

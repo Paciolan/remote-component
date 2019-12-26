@@ -1,10 +1,28 @@
 {
-  "presets": ["@babel/preset-react"],
-  "plugins": [["@babel/plugin-transform-modules-commonjs", { "loose": true }]],
+  "presets": [
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-modules-commonjs",
+      {
+        "loose": true
+      }
+    ]
+  ],
   "env": {
+    "test": {
+      "sourceMaps": true,
+      "retainLines": true
+    },
     "production": {
       "plugins": [
-        ["transform-react-remove-prop-types", { "removeImport": true }]
+        [
+          "transform-react-remove-prop-types",
+          {
+            "removeImport": true
+          }
+        ]
       ]
     }
   }
