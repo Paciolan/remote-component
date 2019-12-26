@@ -1,6 +1,5 @@
 import { createRemoteComponent, createRequires, getDependencies } from "..";
 
-const dependencies = getDependencies();
-const requires = createRequires(dependencies);
+const requires = createRequires(getDependencies);
 
 export const RemoteComponent = createRemoteComponent({ requires });

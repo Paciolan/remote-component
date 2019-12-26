@@ -35,4 +35,31 @@ describe("lib/createRequires", () => {
     const expected = "Could not require 'xyz'. 'xyz' does not exist in dependencies."; // prettier-ignore
     expect(actual).toThrow(expected);
   });
+
+  test("resolves lazy dependency", () => {
+    const expected = "SUCCESS";
+    const requires = createRequires(() => ({
+      xyz: expected
+    }));
+    const actual = requires("xyz");
+    expect(actual).toBe(expected);
+  });
+
+  test("lazy resolves is lazy", () => {
+    const expected = 0;
+    const actual = jest.fn();
+    createRequires(actual);
+    expect(actual).toHaveBeenCalledTimes(expected);
+  });
+
+  test("lazy resolves calls once", () => {
+    const expected = 1;
+    const actual = jest.fn(() => ({
+      xyz: "success"
+    }));
+    const requires = createRequires(actual);
+    requires("xyz");
+    requires("xyz");
+    expect(actual).toHaveBeenCalledTimes(expected);
+  });
 });
