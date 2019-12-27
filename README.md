@@ -204,6 +204,35 @@ const HelloWorld = props => {
 };
 ```
 
+## Create React App
+
+When using Create React App, follow the [Manual Configuration](#Manual-Configuration) with one change:
+
+- Put `remote-component.config.js` inside of `src`, not in the root for CRA.
+
+## You may see some warnings
+
+You may see this warning (sometimes in Create React App):
+
+```
+Compiled with warnings.
+
+./node_modules/@paciolan/remote-component/dist/lib/getDependencies.js
+Module not found: Can't resolve 'remote-component.config.js' in '/et/repo/cra-remote-component/node_modules/@paciolan/remote-component/dist/lib'
+```
+
+This warning be ignored. The warning can also be eliminated with the following change:
+
+```javascript
+// import {
+//   createRemoteComponent,
+//   createRequires
+// } from "@paciolan/remote-component";
+
+import { createRemoteComponent } from "@paciolan/remote-component/dist/lib/createRemoteComponent";
+import { createRequires } from "@paciolan/remote-component/dist/lib/createRequires";
+```
+
 ## Prop Tables
 
 ### `RemoteComponent`
