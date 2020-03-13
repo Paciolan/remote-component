@@ -40,4 +40,4 @@ Deploy:
     - node -e "require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), {repository:{type:'git',url:'$GITHUB_URL'}}), null, 2), 'utf8')"
 
     # publish
-    - npx semantic-release
+    - npx semantic-release@16
