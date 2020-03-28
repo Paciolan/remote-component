@@ -1,43 +1,26 @@
-image: paciolanhub/alpine-node-dev:10.15.3c
+include:
+  - project: development/tools/gitlab-ci-templates
+    ref: master
+    file: /nodejs/all.yml
 
 variables:
   GITHUB_URL: git@github.com:Paciolan/remote-component.git
 
 stages:
   - build
-  - deploy
+  - test
+  - publish
 
-Build & Test:
-  stage: build
-  except:
-    - tags
-  before_script:
-    - npm ci
-  script:
-    - npm run build
-    - npm run lint
-    - npm run test:coverage -- --colors
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - dist/
-  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+Build:
+  # https://gitlabdev.paciolan.info/development/tools/gitlab-ci-templates/blob/master/nodejs/build.yml
+  extends: .nodejs_build
 
-Deploy:
-  stage: deploy
-  environment: NPM
-  only:
-    - master
-  except:
-    - tags
-  before_script:
-    # add git ssh key
-    - ssh-keyscan $SSH_KNOWN_HOSTS >> ~/.ssh/known_hosts
-    - eval $(ssh-agent -s)
-    - echo "$GIT_SSH_PRIV_KEY" | ssh-add -
+Test:
+  # https://gitlabdev.paciolan.info/development/tools/gitlab-ci-templates/blob/master/nodejs/lint_test_coverage.yml
+  extends: .nodejs_lint_test_coverage
+
+Publish:
+  # https://gitlabdev.paciolan.info/development/tools/gitlab-ci-templates/blob/master/nodejs/publish.yml
+  extends: .nodejs_publish_semantic_release
   script:
-    # set repository to github for npm link
     - node -e "require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), {repository:{type:'git',url:'$GITHUB_URL'}}), null, 2), 'utf8')"
-
-    # publish
-    - npx semantic-release@16
