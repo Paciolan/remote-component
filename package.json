@@ -10,6 +10,7 @@
     "url": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git"
   },
   "release": {
+    "debug": "true",
     "branch": "master",
     "tagFormat": "${version}",
     "repositoryUrl": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git",
