@@ -11,6 +11,7 @@
   },
   "release": {
     "branch": "master",
+    "repositoryUrl": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git",
     "tagFormat": "${version}",
     "plugins": [
       "@semantic-release/commit-analyzer",
