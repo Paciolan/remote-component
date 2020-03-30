@@ -1,6 +1,6 @@
 {
   "name": "@paciolan/remote-component",
-  "version": "1.0.0-semantic-versioning",
+  "version": "0.0.0-semantic-versioning",
   "description": "Dynamically load a React Component from a URL",
   "main": "dist/index.js",
   "author": "Paciolan",
