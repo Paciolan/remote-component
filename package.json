@@ -6,13 +6,12 @@
   "author": "Paciolan",
   "license": "MIT",
   "repository": {
-    "type": "git",
+    "type": "ssh",
     "url": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git"
   },
   "release": {
     "branch": "master",
     "tagFormat": "${version}",
-    "repositoryUrl": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git",
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
