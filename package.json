@@ -5,10 +5,6 @@
   "main": "dist/index.js",
   "author": "Paciolan",
   "license": "MIT",
-  "repository": {
-    "type": "ssh",
-    "url": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git"
-  },
   "release": {
     "branch": "master",
     "repositoryUrl": "git@gitlabdev.paciolan.info:development/library/javascript/react/remote-component.git",
