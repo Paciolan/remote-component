@@ -315,6 +315,7 @@ There are a few things to be aware of when using `RemoteComponent`.
 - The external dependencies of the library and Web Application must match. This makes upgrading 3rd party libraries that have breaking changes more complex.
 - The `RemoteComponent` and web application's browser targets must match.
 - Debugging could be more complicated as source map support does not (yet) exist.
+- Nested remote components can get exponentially hard to manage (dependencies) and develop (running multiple repositories at the same time for localhost)
 
 ## Contributors
 
