@@ -8,6 +8,7 @@ export const createUseRemoteComponent = args => {
     const [{ loading, err, component }, setState] = useState({ loading: true });
 
     useEffect(() => {
+      setState({loading: true})
       loadRemoteModule(url)
         .then(module => setState({ loading: false, component: module.default }))
         .catch(err => setState({ loading: false, err }));
