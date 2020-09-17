@@ -1,8 +1,12 @@
+/**
+ * NOTE: This is the OLD style testing where we are mocking react (BAD)
+ *       Look at useRemoteComponent2.test.js for the new style.
+ */
 import { createUseRemoteComponent } from "../useRemoteComponent";
 import React from "react";
 
 jest.mock("react", () => ({
-  useEffect: jest.fn().mockImplementation(f => f())
+  useEffect: jest.fn(f => f())
 }));
 
 const waitNextFrame = () => new Promise(resolve => setTimeout(resolve));
