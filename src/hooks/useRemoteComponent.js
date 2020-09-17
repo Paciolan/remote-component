@@ -8,9 +8,16 @@ export const createUseRemoteComponent = args => {
     const [{ loading, err, component }, setState] = useState({ loading: true });
 
     useEffect(() => {
+      let update = setState;
+      update({ loading: true });
       loadRemoteModule(url)
-        .then(module => setState({ loading: false, component: module.default }))
-        .catch(err => setState({ loading: false, err }));
+        .then(module => update({ loading: false, component: module.default }))
+        .catch(err => update({ loading: false, err }));
+
+      return () => {
+        // invalidate update function for stale closures
+        update = () => {};
+      };
     }, [url]);
 
     return [loading, err, component];
