@@ -283,6 +283,12 @@ Once loaded, there will either be an `err` or a `Component`. The rendering will 
 
 The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component.
 
+## Roadmap
+
+- Add support for multiple components import from a single URL.
+- Add TypeScript support
+- Suppprt Create React App
+
 ## Caveats
 
 There are a few things to be aware of when using `RemoteComponent`.
