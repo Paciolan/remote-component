@@ -27,7 +27,7 @@
     "watch": "npm run build -- --watch"
   },
   "dependencies": {
-    "@paciolan/remote-module-loader": "^2.4.0"
+    "@paciolan/remote-module-loader": "^2.5.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
