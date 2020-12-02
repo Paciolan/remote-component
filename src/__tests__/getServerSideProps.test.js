@@ -1,4 +1,4 @@
-import { getServerSideProps } from "../index";
+import { getServerSideProps } from "../getServerSideProps";
 
 jest.mock("@paciolan/remote-module-loader", () => () => async url => {
   const componentNoProps = () => {};

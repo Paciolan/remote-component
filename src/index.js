@@ -1,6 +1,7 @@
 export { createUseRemoteComponent } from "./hooks/useRemoteComponent";
-export { createRequires } from "./lib/createRequires";
-export { getDependencies } from "./lib/getDependencies";
-export { createRemoteComponent } from "./lib/createRemoteComponent";
+export { createRequires } from "./createRequires";
+export { getDependencies } from "./getDependencies";
+export { createRemoteComponent } from "./createRemoteComponent";
 export { RemoteComponent } from "./components/RemoteComponent";
-export { getServerSideProps } from "./next";
+export { fetchRemoteComponent } from "./fetchRemoteComponent";
+export { getServerSideProps } from "./getServerSideProps";
