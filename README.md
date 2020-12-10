@@ -9,22 +9,14 @@ Dynamically load a React Component from a URL.
 Use Remote Components the same way you use a local React Component.
 
 ```javascript
-// Local
-const HelloWorld = ({ name }) => <div>Hello {name}!</div>;
+const url =
+  "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js";
 
-// Remote
-const RemoteHelloWorld = ({ name }) => (
-  <RemoteComponent
-    url="https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"
-    name={name}
-  />
-);
+const HelloWorld = ({ name }) => <RemoteComponent url={url} name={name} />;
 
-// Same Same but Different
 const Container = (
   <>
-    <HelloWorld name="Local" />
-    <RemoteHelloWorld name="Remote" />
+    <HelloWorld name="Remote" />
   </>
 );
 ```
@@ -206,9 +198,60 @@ const HelloWorld = props => {
 
 ## Create React App (CRA)
 
-Create React App must be ejected to access the `webpack.config.js`.
+Start a new Create React App app or use an existing one. This is a React Application that will import Remote Components.
 
-The Roadmap includes better support for CRA.
+```bash
+$ npx create-react-app my-react-app
+$ cd my-react-app
+```
+
+Create `src/remote-component.config.js`. note: CRA requires this file to be placed inside of `src`.
+
+```javascript
+/**
+ * These dependencies will be made available to the Remote Components.
+ */
+module.exports = {
+  resolve: {
+    react: require("react")
+  }
+};
+```
+
+Create `src/RemoteComponent.js`. The `RemoteComponent` must manually be created because CRA does not provide access to `webpack.config.js` without ejection.
+
+```javascript
+import {
+  createRemoteComponent,
+  createRequires
+} from "@paciolan/remote-component";
+import { resolve } from "./remote-component.config.js";
+
+const requires = createRequires(resolve);
+
+export const RemoteComponent = createRemoteComponent({ requires });
+```
+
+You may see the following warning. It is safe to ignore.
+
+```
+Compiled with warnings.
+
+./node_modules/@paciolan/remote-component/dist/getDependencies.js
+Module not found: Can't resolve 'remote-component.config.js' in '/et/repo/cra-remote-component/node_modules/@paciolan/remote-component/dist'
+```
+
+You can get rid of this warning by directly including the files. This is unsafe as these files paths could change.
+
+```javascript
+import { createRemoteComponent } from "@paciolan/remote-component/dist/createRemoteComponent";
+import { createRequires } from "@paciolan/remote-component/dist/createRequires";
+import { resolve } from "./remote-component.config.js";
+
+const requires = createRequires(resolve);
+
+export const RemoteComponent = createRemoteComponent({ requires });
+```
 
 ## Prop Tables
 
