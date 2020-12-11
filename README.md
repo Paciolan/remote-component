@@ -326,11 +326,22 @@ Once loaded, there will either be an `err` or a `Component`. The rendering will 
 
 The `Component` will be rendered either to the `render` callback if one exists, otherwise it will be rendered as a standard component.
 
+## Content Security Policy (CSP)
+
+Sites with a content_security_policy header set are likely to not work. CSP puts a restriction on using new Function, which remote-module-loader relies upon.
+
+This library depends on [@paciolan/remote-module-loader](https://github.com/Paciolan/remote-module-loader), which does not support CSP. Until CSP is supported in [@paciolan/remote-module-loader](https://github.com/Paciolan/remote-module-loader), it cannot be supported.
+
+[Read more on CSP](https://developer.chrome.com/extensions/contentSecurityPolicy)
+
+## Alternatives
+
+- [Webpack Module Federation](https://webpack.js.org/concepts/module-federation)
+
 ## Roadmap
 
 - Add support for multiple components import from a single URL.
 - Add TypeScript support
-- Suppprt Create React App
 
 ## Caveats
 
