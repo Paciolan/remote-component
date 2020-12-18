@@ -24,6 +24,9 @@ Load a React Component from a URL at runtime.
   - [Remote Component Starter Kit](#remote-component-starter-kit)
   - [Creating a Remote Component with Webpack](#creating-a-remote-component-with-webpack)
 - [Create React App (CRA)](<#create-react-app-(cra)>)
+- [Server Side Rendering with Next.js](#server-side-rendering-with-next.js)
+  - [getServerSideProps](#getserversideprops)
+  - [Calling getServerSideProps from Next.js](#calling-getserversideprops-from-next.js)
 - [How it works](#how-it-works)
 - [Content Security Policy (CSP)](<#content-security-policy-(csp)>)
 - [Alternatives](#alternatives)
@@ -304,6 +307,94 @@ import { resolve } from "./remote-component.config.js";
 const requires = createRequires(resolve);
 
 export const RemoteComponent = createRemoteComponent({ requires });
+```
+
+## Server Side Rendering with Next.js
+
+Server Side Rendering with Next.js is currently (EXPERIMENTAL).
+
+Follow the steps in [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack) to create the `remote-component.config.js`.
+
+### getServerSideProps
+
+Add a `getServerSideProps` method to your Remote Component. This follows the Next.js pattern.
+
+```javascript
+import React from "react";
+
+const Person = ({ data }) => {
+  const entries = Object.entries(data);
+  const rows = entries.map(([key, value], i) => (
+    <tr>
+      <th>{key}</th>
+      <td>{value}</td>
+    </tr>
+  ));
+
+  return <table>{rows}</table>;
+};
+
+const getServerSideProps = async ({ data }) => {
+  const response = await fetch(`https://swapi.dev/api/people/${data.id}`);
+  return await response.json();
+};
+
+Person.getServerSideProps = getServerSideProps;
+
+export default Person;
+```
+
+## Calling getServerSideProps from Next.js
+
+Modify the Next.js page that will contain the Remote Component.
+
+Add these imports. Notice how `getServerSideProps` is renamed to `getProps` to prevent conflicts with the Next.js function of the same name.
+
+```javascript
+import {
+  createRequires,
+  fetchRemoteComponent,
+  getServerSideProps as getProps
+} from "@paciolan/remote-component";
+import dynamic from "next/dynamic";
+import config from "../remote-component.config";
+```
+
+Create the `requires` for shared dependencies that will be provided to the Remote Component. Then pass `url` and `requires` into `fetchRemoteComponent`. Wrap this inside of `dynamic`.
+
+```javascript
+const requires = createRequires(config.resolve);
+
+const url = "http://localhost:5000/MyRemoteComponent.js";
+const MyRemoteComponent = dynamic(() =>
+  fetchRemoteComponent({ url, requires })
+);
+```
+
+Create Next.js's `getServerSideProps` function. Pass the Next.js `context` (if the component needs the context) as well as any data in as `context` when calling `getProps`.
+
+```javascript
+export async function getServerSideProps(context) {
+  const data = { id: 1 };
+  const myData = await getProps({
+    url,
+    requires,
+    context: { ...context, data }
+  });
+  return { props: { myData } };
+}
+```
+
+The `props` returned from Next.js's `getServerSideProps` function will be passed into the `props`. You can then use those `props` to send the data into the Remote Component.
+
+```javascript
+export default function MyPage(props) {
+  return (
+    <div>
+      <MyRemoteComponent data={props.myData} />
+    </div>
+  );
+}
 ```
 
 ## How it works
