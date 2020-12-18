@@ -1,12 +1,41 @@
 # Remote Component ![coverage:100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 
-![Planet with transmitter](https://raw.githubusercontent.com/Paciolan/remote-component/master/media/logo-small.png)
+![remote-component](https://replatform.s3-us-west-1.amazonaws.com/remote-component/remote-component.png)
 
-Dynamically load a React Component from a URL.
+Load a React Component from a URL at runtime.
 
-## Quick Look
+## Table of Contents
 
-Use Remote Components the same way you use a local React Component.
+- [What is a Remote Component?](#what-is-a-remote-component?)
+- [Requirements](#requirements)
+- [Install](#install)
+- [Dependencies](#dependencies)
+  - [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack)
+  - [Injecting Dependencies without Webpack](#injecting-dependencies-without-webpack)
+- [Importing a Remote Component](#importing-a-remote-component)
+  - [Webpack](#webpack)
+  - [Manual Configuration](#manual-configuration)
+    - [remote-component.config.js](#remote-component.config.js)
+    - [src/RemoteComponent.js](#src/RemoteComponent.js)
+- [Adding a Remote Component to a React App](#adding-a-remote-component-to-a-react-app)
+  - [Render Props](#render-props)
+  - [React Hooks](#react-hooks)
+- [Creating a Remote Component](#creating-a-remote-component)
+  - [Remote Component Starter Kit](#remote-component-starter-kit)
+  - [Creating a Remote Component with Webpack](#creating-a-remote-component-with-webpack)
+- [Create React App (CRA)](<#create-react-app-(cra)>)
+- [Server Side Rendering with Next.js](#server-side-rendering-with-next.js)
+  - [getServerSideProps](#getserversideprops)
+  - [Calling getServerSideProps from Next.js](#calling-getserversideprops-from-next.js)
+- [How it works](#how-it-works)
+- [Content Security Policy (CSP)](<#content-security-policy-(csp)>)
+- [Alternatives](#alternatives)
+- [Roadmap](#roadmap)
+- [Caveats](#caveats)
+
+## What is a Remote Component?
+
+A Remote Components is loaded at runtime from a URL. It is used in the same way any other React Component is used.
 
 ```javascript
 const url =
@@ -21,29 +50,30 @@ const Container = (
 );
 ```
 
-## Requirements
-
-React 16.8 is required because this component uses React Hooks.
-
 ## Install
 
 ```bash
 npm install @paciolan/remote-component
 ```
 
-## Webpack
+## Dependencies
 
-Using Webpack is the recommended and easiest way to use `RemoteComponent`.
+The React Application and Remote Component can share dependencies. The dependencies must be configured explicitly.
 
-Create a file in the root of your web application called `remote-component.config.js`.
+Shared dependencies in the Remote Component must be marked as `external` so they are not bundled in the output.
+
+All shared dependencies must be provided by the React Application.
+
+### Injecting Dependencies with Webpack
+
+Create a file in the root of your React Application called `remote-component.config.js`. Some frameworks like Create React App (CRA) might need this file placed inside the `src` directory. The location can be changed inside of `webpack.config.js`.
+
+This file will supply the Remote Components with their needed external dependencies.
 
 ```javascript
 /**
- * remote-component.config.js
- *
  * Dependencies for Remote Components
  */
-
 module.exports = {
   resolve: {
     react: require("react")
@@ -51,13 +81,9 @@ module.exports = {
 };
 ```
 
-Add a Webpack `alias` so the RemoteComponent can load this file.
+Add a Webpack `alias` inside of `webpack.config.js` so the RemoteComponent can load this file.
 
 ```javascript
-/**
- * webpack.config.js
- */
-
 module.exports = {
   resolve: {
     alias: {
@@ -67,7 +93,41 @@ module.exports = {
 };
 ```
 
-Now you are ready to use `RemoteComponent`!
+### Injecting Dependencies without Webpack
+
+Projects without webpack can still use a Remote Component through a manual configuration.
+
+Follow the directions in [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack) to create the `remote-component.config.js`.
+
+Create `src/RemoteComponent.js` and import the dependencies from `remote-component.config.js`.
+
+```javascript
+import {
+  createRemoteComponent,
+  createRequires
+} from "@paciolan/remote-component";
+import { resolve } from "../remote-component.config.js";
+
+const requires = createRequires(resolve);
+
+export const RemoteComponent = createRemoteComponent({ requires });
+```
+
+Then you will change the `import` for `RemoteComponent` to point to this new file.
+
+```
+import { RemoteComponent } from "./RemoteComponent";
+```
+
+### Adding a Remote Component to a React App
+
+Import `RemoteComponent` from either `@paciolan/remote-component` or your custom `./src/RemoteComponent.js` (depending on your setup).
+
+It is recommended to wrap `<RemoteComponent />` in a component for better naming and separation. This is optional.
+
+Pass the `url` to the `<RemoteComponent />`.
+
+Use a `RemoteComponent` like a regular React Component.
 
 ```javascript
 import React from "react";
@@ -82,78 +142,11 @@ const HelloWorld = props => <RemoteComponent url={url} {...props} />;
 ReactDOM.render(<HelloWorld name="Paciolan" />, element);
 ```
 
-## Manual Configuration
-
-Remote Components will require some dependencies to be injected into them. At the minimum, we'll be injecting the React dependency.
-
-### `remote-component.config.js`
-
-The web application can include dependencies and inject them into the `RemoteComponent`. At a minimum, you will probably need the `react` dependency.
-
-Create a the file `remote-component.config.js` in the root of the web application.
-
-```javascript
-/**
- * remote-component.config.js
- *
- * Dependencies for Remote Components
- */
-
-module.exports = {
-  resolve: {
-    react: require("react")
-  }
-};
-```
-
-### `src/components/RemoteComponent.js`
-
-Export `RemoteComponent` with the `requires` from `remote-component.config.js`. This will inject the dependencies into the `RemoteComponent`.
-
-```javascript
-/*
- * src/components/RemoteComponent.js
- */
-
-import {
-  createRemoteComponent,
-  createRequires
-} from "@paciolan/remote-component";
-import { resolve } from "../../remote-component.config.js";
-
-const requires = createRequires(resolve);
-export const RemoteComponent = createRemoteComponent({ requires });
-```
-
-### Basic Usage
-
-For 99% of use-cases, the Basic Usage is enough.
-
-```javascript
-import React from "react";
-import ReactDOM from "react-dom";
-import { RemoteComponent } from "./components/RemoteComponent";
-
-const element = document.getElementById("app");
-const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
-
-const HelloWorld = props => <RemoteComponent url={url} {...props} />;
-
-ReactDOM.render(<HelloWorld name="Paciolan" />, element);
-```
-
-### Render Props Usage
+### Render Props
 
 In the case you need more control over the error or rendering, you can use a `render` prop.
 
 ```javascript
-import React from "react";
-import ReactDOM from "react-dom";
-import { RemoteComponent } from "./components/RemoteComponent";
-
-const element = document.getElementById("app");
-const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
-
 const HelloWorld = props =>
   <RemoteComponent
     url={url}
@@ -162,13 +155,13 @@ const HelloWorld = props =>
     }
   />
 );
-
-ReactDOM.render(<HelloWorld name="Paciolan" />, element);
 ```
 
 ## React Hooks
 
-If you need even more control, you can use `useRemoteComponent` React Hook.
+If you need even more control, you can create a custom `useRemoteComponent` React Hook.
+
+Start by creating `src/useRemoteComponent.js`.
 
 ```javascript
 import {
@@ -177,9 +170,17 @@ import {
 } from "@paciolan/remote-component";
 import { resolve } from "../../remote-component.config.js";
 
-const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 const requires = createRequires(resolve);
-const useRemoteComponent = createUseRemoteComponent({ requires });
+
+export const useRemoteComponent = createUseRemoteComponent({ requires });
+```
+
+Next, use the custom hook.
+
+```javascript
+import { useRemoteComponent } from "./useRemoteComponent";
+
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
 
 const HelloWorld = props => {
   const [loading, err, Component] = useRemoteComponent(url);
@@ -194,6 +195,61 @@ const HelloWorld = props => {
 
   return <Component {...props} />;
 };
+```
+
+## Creating a Remote Component
+
+Creating a Remote Component involves creating a CommonJS module. That module should have `react` and other shared dependencies excluded from the bundle. It should also already be transpiled for browser support.
+
+### Remote Component Starter Kit
+
+Clone the [remote-component-starter](https://github.com/Paciolan/remote-component-starter) for a ready to go project.
+
+### Creating a Remote Component with Webpack
+
+The Remote Component must be exported.
+
+```javascript
+import React from "react";
+
+const RemoteComponent = () => {
+  return <div>Hello Remote World!</div>;
+};
+
+export default RemoteComponent;
+```
+
+Inside of the `webpack.config.js`, the `libraryTarget` must be set to `commonjs`.
+
+Any shared dependencies must be added as an `external`. This will prevent them from being bundled in the library.
+
+```javascript
+module.exports = {
+  output: {
+    libraryTarget: "commonjs"
+  },
+  externals: {
+    react: "react"
+  }
+};
+```
+
+Inside of the `package.json`, set `main` to the webpack entrypoint. This will probably be `dist/main.js`.
+
+Shared dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` (so they are available during development) and `peerDependencies` (so the upstream package knows it is responsible for installation).
+
+The dependency version should match the version inside the React Application.
+
+```javascript
+{
+  "main": "dist/main.js",
+  "devDependencies": {
+    "react": "^16.8"
+  },
+  "peerDependencies": {
+    "react": "^16.8"
+  }
+}
 ```
 
 ## Create React App (CRA)
@@ -253,72 +309,97 @@ const requires = createRequires(resolve);
 export const RemoteComponent = createRemoteComponent({ requires });
 ```
 
-## Prop Tables
+## Server Side Rendering with Next.js
 
-### `RemoteComponent`
+Server Side Rendering with Next.js is currently (EXPERIMENTAL).
 
-| Property   | Type        | Required | Description                                 |
-| ---------- | ----------- | :------: | ------------------------------------------- |
-| `url`      | `String`    |    ✔️    | Location of remote component bundle         |
-| `fallback` | `Component` |          | Component to render while loading           |
-| `render`   | `render`    |          | Render props function is called when exists |
+Follow the steps in [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack) to create the `remote-component.config.js`.
 
-## Creating Remote Components
+### getServerSideProps
 
-### `src/index.js`
-
-Create `src/index.js` and expose your component as the `default`.
+Add a `getServerSideProps` method to your Remote Component. This follows the Next.js pattern.
 
 ```javascript
 import React from "react";
 
-const RemoteComponent = () => {
-  return <div>Hello Remote World!</div>;
+const Person = ({ data }) => {
+  const entries = Object.entries(data);
+  const rows = entries.map(([key, value], i) => (
+    <tr>
+      <th>{key}</th>
+      <td>{value}</td>
+    </tr>
+  ));
+
+  return <table>{rows}</table>;
 };
 
-export default RemoteComponent;
-```
-
-### `webpack.config.js`
-
-The `libraryTarget` of the `RemoteComponent` must be set to `commonjs`.
-
-Any dependencies that will not be bundled with the library must be added as an `external`.
-
-It is recommended to add `react` as an `external`.
-
-```javascript
-module.exports = {
-  output: {
-    libraryTarget: "commonjs"
-  },
-  externals: {
-    react: "react"
-  }
+const getServerSideProps = async ({ data }) => {
+  const response = await fetch(`https://swapi.dev/api/people/${data.id}`);
+  return await response.json();
 };
+
+Person.getServerSideProps = getServerSideProps;
+
+export default Person;
 ```
 
-## `package.json`
+## Calling getServerSideProps from Next.js
 
-Set `main` to the webpacked entrypoint. This will probably be `dist/main.js`.
+Modify the Next.js page that will contain the Remote Component.
 
-Dependencies you have marked as `external` should be removed from `dependencies` and added to both `devDependencies` (so they are available during development) and `peerDependencies` (so the upstream package knows it is responsible for installation).
+Add these imports. Notice how `getServerSideProps` is renamed to `getProps` to prevent conflicts with the Next.js function of the same name.
 
 ```javascript
-{
-  "main": "dist/main.js",
-  "devDependencies": {
-    "react": "^16.8"
-  },
-  "peerDependencies": {
-    "react": "^16.8"
-  }
+import {
+  createRequires,
+  fetchRemoteComponent,
+  getServerSideProps as getProps
+} from "@paciolan/remote-component";
+import dynamic from "next/dynamic";
+import config from "../remote-component.config";
+```
+
+Create the `requires` for shared dependencies that will be provided to the Remote Component. Then pass `url` and `requires` into `fetchRemoteComponent`. Wrap this inside of `dynamic`.
+
+```javascript
+const requires = createRequires(config.resolve);
+
+const url = "http://localhost:5000/MyRemoteComponent.js";
+const MyRemoteComponent = dynamic(() =>
+  fetchRemoteComponent({ url, requires })
+);
+```
+
+Create Next.js's `getServerSideProps` function. Pass the Next.js `context` (if the component needs the context) as well as any data in as `context` when calling `getProps`.
+
+```javascript
+export async function getServerSideProps(context) {
+  const data = { id: 1 };
+  const myData = await getProps({
+    url,
+    requires,
+    context: { ...context, data }
+  });
+  return { props: { myData } };
+}
+```
+
+The `props` returned from Next.js's `getServerSideProps` function will be passed into the `props`. You can then use those `props` to send the data into the Remote Component.
+
+```javascript
+export default function MyPage(props) {
+  return (
+    <div>
+      <MyRemoteComponent data={props.myData} />
+    </div>
+  );
 }
 ```
 
 ## How it works
 
-The `RemoteComponent` React Component takes a `url` as a prop. The `url` is loaded and processed. This file must be a valid CommonJS Module that exports the component as `default`.
+The `RemoteComponent` React Component takes a `url` as a prop. The `url` is loaded and evaluated. This file must be a valid CommonJS Module that exports the component as `default`.
 
 While the `url` is loading, the `fallback` will be rendered. This is a similar pattern to [`React.Suspense`](https://reactjs.org/blog/2018/10/23/react-v-16-6.html). If no `fallback` is provided, then nothing will be rendered while loading.
 
@@ -347,15 +428,20 @@ This library depends on [@paciolan/remote-module-loader](https://github.com/Paci
 
 There are a few things to be aware of when using `RemoteComponent`.
 
-- Calls to a `RemoteComponent` add an additional HTTP call. Be aware of this and use wisely.
-- Dependencies could be included twice. If a dependency is included in the library and also in the Web App, there could be unknown effects.
+- Calls to a `RemoteComponent` add an additional HTTP call.
+- Dependencies could be included twice. If a dependency is included in the library and also in the Web App. This could have unknown effects.
 - The external dependencies of the library and Web Application must match. This makes upgrading 3rd party libraries that have breaking changes more complex.
-- The `RemoteComponent` and web application's browser targets must match.
+- The `RemoteComponent` and web application's browser targets must match. If your React App targets IE11, but the Remote Component does not, then it will not work in IE11.
 - Debugging could be more complicated as source map support does not (yet) exist.
 - Nested `RemoteComponents` can get exponentially hard to manage (dependencies) and develop (running multiple repositories at the same time for localhost)
+- [Content Security Policy (CSP)](<#content-security-policy-(csp)>) is not supported.
 
 ## Contributors
 
 Joel Thoms (https://twitter.com/joelnet)
 
-Icons made by [Freepik](https://www.freepik.com) from [www.flaticon.com](https://www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0)
+Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+
+Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+
+Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
