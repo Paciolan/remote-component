@@ -1,14 +1,17 @@
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
+import { RemoteComponent } from "./createRemoteComponent";
 
-/**
- * Fetches a Remote Component for Server Side Rendering using next/dynamic.
- * @param {object} options
- * @param {string} options.url
- * @param {Function} options.requires
- * @param {string} options.imports
- * @returns {Promise<object>}
- */
-export const fetchRemoteComponent = ({
+interface FetchRemoteComponentOptions {
+  requires: (string) => unknown;
+  url: string;
+  imports?: string;
+}
+
+interface FetchRemoteComponent {
+  (options: FetchRemoteComponentOptions): Promise<RemoteComponent>;
+}
+
+export const fetchRemoteComponent: FetchRemoteComponent = ({
   requires,
   url,
   imports = "default"

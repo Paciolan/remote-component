@@ -28,7 +28,8 @@ describe("lib/getDependencies", () => {
     };
 
     const resolve = ensureRemoteComponentConfig(config);
-    const actual = resolve["remote-component.config.js"].resolve;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const actual = (resolve["remote-component.config.js"] as any).resolve;
     expect(actual).toEqual(resolve);
   });
 });

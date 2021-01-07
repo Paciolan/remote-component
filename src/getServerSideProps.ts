@@ -1,15 +1,17 @@
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
-/**
- * Get Server Side Props for Next.js apps
- * @param {object} options
- * @param {string} options.url
- * @param {Function} options.requires
- * @param {object} options.context
- * @param {string} options.imports
- * @returns {object}
- */
-export const getServerSideProps = ({
+interface GetServerSidePropsOptions {
+  url: string;
+  requires: (string) => unknown;
+  context: unknown;
+  imports?: string;
+}
+
+interface GetServerSideProps {
+  (options: GetServerSidePropsOptions): Promise<unknown>;
+}
+
+export const getServerSideProps: GetServerSideProps = ({
   url,
   requires,
   context,

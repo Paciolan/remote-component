@@ -1,7 +1,19 @@
+export interface DependencyFunction {
+  (name: string): unknown;
+}
+
+export interface DependencyTable {
+  [props: string]: unknown;
+}
+
+export interface CreateRequires {
+  (dependencies?: () => DependencyTable): (string) => unknown;
+}
+
 const sanitizeDependencies = dependencies =>
   typeof dependencies === "function" ? dependencies() : dependencies || {};
 
-export const createRequires = dependencies => {
+export const createRequires: CreateRequires = dependencies => {
   let isSanitized = false;
 
   return name => {
