@@ -1,9 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchRemoteComponent } from "../fetchRemoteComponent";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 jest.mock("@paciolan/remote-module-loader", () => () => async () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const defaultComponent = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const alternateComponent = () => {};
-  alternateComponent.getServerSideProps = () => {
+  (alternateComponent as any).getServerSideProps = () => {
     return { abc: 123 };
   };
 
@@ -17,7 +23,7 @@ describe("fetchRemoteComponent", () => {
   test("returns default component", async () => {
     expect.assertions(1);
     const url = "http://fake.url/component.js";
-    const requires = () => {};
+    const requires = noop;
 
     const Component = await fetchRemoteComponent({ url, requires });
     const expected = "defaultComponent";
@@ -27,7 +33,7 @@ describe("fetchRemoteComponent", () => {
   test("returns alternate component", async () => {
     expect.assertions(1);
     const url = "http://fake.url/component.js";
-    const requires = () => {};
+    const requires = noop;
     const imports = "alternate";
 
     const Component = await fetchRemoteComponent({ url, requires, imports });
@@ -38,7 +44,7 @@ describe("fetchRemoteComponent", () => {
   test("returns alternate component", () => {
     expect.assertions(1);
     const url = "http://fake.url/component.js";
-    const requires = () => {};
+    const requires = noop;
     const imports = "invalid";
 
     const actual = fetchRemoteComponent({ url, requires, imports });

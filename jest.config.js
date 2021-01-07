@@ -1,6 +1,6 @@
 /* eslint-env node */
 module.exports = {
-  collectCoverageFrom: ["./src/**/*.js"],
+  collectCoverageFrom: ["./src/**/*.ts"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   coverageThreshold: {
     global: {

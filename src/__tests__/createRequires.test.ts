@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createRequires } from "../createRequires";
 
 describe("lib/createRequires", () => {
@@ -38,9 +39,9 @@ describe("lib/createRequires", () => {
 
   test("resolves lazy dependency", () => {
     const expected = "SUCCESS";
-    const requires = createRequires(() => ({
+    const requires = createRequires((() => ({
       xyz: expected
-    }));
+    })) as any);
     const actual = requires("xyz");
     expect(actual).toBe(expected);
   });
@@ -48,7 +49,7 @@ describe("lib/createRequires", () => {
   test("lazy resolves is lazy", () => {
     const expected = 0;
     const actual = jest.fn();
-    createRequires(actual);
+    createRequires(actual as any);
     expect(actual).toHaveBeenCalledTimes(expected);
   });
 
@@ -57,7 +58,7 @@ describe("lib/createRequires", () => {
     const actual = jest.fn(() => ({
       xyz: "success"
     }));
-    const requires = createRequires(actual);
+    const requires = createRequires(actual as any);
     requires("xyz");
     requires("xyz");
     expect(actual).toHaveBeenCalledTimes(expected);

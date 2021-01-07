@@ -1,1 +1,4 @@
-extends: ["@paciolan/react"]
+parser: "@typescript-eslint/parser"
+extends:
+  - "@paciolan/react"
+  - "plugin:@typescript-eslint/recommended"
