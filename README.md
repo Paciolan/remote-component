@@ -23,7 +23,7 @@ Load a React Component from a URL at runtime.
 - [Creating a Remote Component](#creating-a-remote-component)
   - [Remote Component Starter Kit](#remote-component-starter-kit)
   - [Creating a Remote Component with Webpack](#creating-a-remote-component-with-webpack)
-- [Create React App (CRA)](<#create-react-app-(cra)>)
+- [Create React App (CRA)](<#create-react-app-cra>)
 - [Server Side Rendering with Next.js](#server-side-rendering-with-next.js)
   - [getServerSideProps](#getserversideprops)
   - [Calling getServerSideProps from Next.js](#calling-getserversideprops-from-next.js)
