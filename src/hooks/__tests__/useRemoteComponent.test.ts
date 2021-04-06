@@ -6,7 +6,10 @@ import { createUseRemoteComponent } from "../useRemoteComponent";
 import React from "react";
 
 jest.mock("react", () => ({
-  useEffect: jest.fn(f => f())
+  useEffect: jest.fn(f => f()),
+  useRef: jest.fn(s => ({
+    current: s
+  }))
 }));
 
 const waitNextFrame = () => new Promise(resolve => setTimeout(resolve));

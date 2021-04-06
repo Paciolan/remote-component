@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
 export interface UseRemoteComponentHook {
@@ -16,10 +16,12 @@ export const createUseRemoteComponent = (
       err: undefined,
       component: undefined
     });
+    const latestUrl = useRef(url);
 
     useEffect(() => {
       let update = setState;
       update({ loading: true, err: undefined, component: undefined });
+      latestUrl.current = url;
       loadRemoteModule(url)
         .then(module =>
           update({ loading: false, err: undefined, component: module.default })
@@ -33,7 +35,9 @@ export const createUseRemoteComponent = (
         };
       };
     }, [url]);
-
+    if (latestUrl.current !== url) {
+      return [true, undefined, undefined];
+    }
     return [loading, err, component];
   };
 
