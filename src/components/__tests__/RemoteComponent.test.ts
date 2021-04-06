@@ -1,7 +1,7 @@
 import { RemoteComponent } from "../RemoteComponent";
-import { getDependencies } from "../../lib/getDependencies";
+import { getDependencies } from "../../getDependencies";
 
-jest.mock("../../lib/getDependencies", () => ({
+jest.mock("../../getDependencies", () => ({
   getDependencies: jest.fn()
 }));
 

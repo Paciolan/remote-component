@@ -1,7 +1,10 @@
-import propTypes from "prop-types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { createRemoteComponent } from "../createRemoteComponent";
 import { render } from "enzyme";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 describe("createRemoteComponent", () => {
   const RemoteComponent = createRemoteComponent();
@@ -10,27 +13,21 @@ describe("createRemoteComponent", () => {
     jest.restoreAllMocks();
   });
 
-  test("RemoteComponent has propTypes", () => {
-    const expected = {
-      url: propTypes.string.isRequired,
-      fallback: propTypes.object,
-      render: propTypes.func
-    };
-    const actual = RemoteComponent.propTypes;
-    expect(actual).toMatchObject(expected);
-  });
-
   test("when loading and no fallback nothing is rendered", async () => {
-    jest.spyOn(React, "useState").mockImplementation(() => [{ loading: true }]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+    jest
+      .spyOn(React, "useState")
+      .mockImplementation((() => [{ loading: true }]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "";
     const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
   });
 
   test("when loading fallback is rendered", async () => {
-    jest.spyOn(React, "useState").mockImplementation(() => [{ loading: true }]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+    jest
+      .spyOn(React, "useState")
+      .mockImplementation((() => [{ loading: true }]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Loading...";
     const fallback = <div>{expected}</div>;
     const actual = render(
@@ -42,10 +39,10 @@ describe("createRemoteComponent", () => {
   test("when prop render exists it is called", async () => {
     jest
       .spyOn(React, "useState")
-      .mockImplementation(() => [
+      .mockImplementation((() => [
         { loading: false, err: "my-err", component: "my-component" }
-      ]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+      ]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "SUCCESS!";
     const mockRender = jest
       .fn()
@@ -65,8 +62,8 @@ describe("createRemoteComponent", () => {
   test("when no Component error is rendered", async () => {
     jest
       .spyOn(React, "useState")
-      .mockImplementation(() => [{ loading: false }]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+      .mockImplementation((() => [{ loading: false }]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Unknown Error: UNKNOWN";
     const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
@@ -75,20 +72,20 @@ describe("createRemoteComponent", () => {
   test("when `err` error is rendered", async () => {
     jest
       .spyOn(React, "useState")
-      .mockImplementation(() => [
+      .mockImplementation((() => [
         { loading: false, err: "Somethin aint right" }
-      ]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+      ]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Unknown Error: Somethin aint right";
     const actual = render(<RemoteComponent url="http://valid.url" />);
     expect(actual.text()).toBe(expected);
   });
 
   test("RemoteComponent renders", async () => {
-    jest.spyOn(React, "useState").mockImplementation(() => [
+    jest.spyOn(React, "useState").mockImplementation((() => [
       { loading: false, component: ({ msg }) => <div>Message: {msg}</div> } // eslint-disable-line
-    ]);
-    jest.spyOn(React, "useEffect").mockImplementation(() => {});
+    ]) as any);
+    jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Message: SUCCESS!";
     const actual = render(
       <RemoteComponent url="http://valid.url" msg="SUCCESS!" />
