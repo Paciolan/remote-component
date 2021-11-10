@@ -1,7 +1,7 @@
 include:
   - project: development/tools/gitlab-ci-templates
     ref: master
-    file: /nodejs/all.yml
+    file: /nodejs/all-16.yml
 
 variables:
   GITHUB_URL: git@github.com:Paciolan/remote-component.git
