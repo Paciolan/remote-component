@@ -11,6 +11,7 @@ Load a React Component from a URL at runtime.
 - [Dependencies](#dependencies)
   - [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack)
   - [Injecting Dependencies without Webpack](#injecting-dependencies-without-webpack)
+  - [Custom Fetcher](#custom-fetcher)
 - [Adding a Remote Component to a React App](#adding-a-remote-component-to-a-react-app)
   - [Render Props](#render-props)
   - [React Hooks](#react-hooks)
@@ -111,6 +112,18 @@ Then you will change the `import` for `RemoteComponent` to point to this new fil
 
 ```
 import { RemoteComponent } from "./RemoteComponent";
+```
+
+## Custom Fetcher
+
+The Custom Fetcher is a feature for advanced users only. It exposes the `fetcher` from the underlying [@paciolan/remote-module-loader](https://github.com/Paciolan/remote-module-loader).
+
+Refer to [@paciolan/remote-module-loader](https://github.com/Paciolan/remote-module-loader) documentation for more information about how to use the `fetcher`.
+
+```javascript
+const fetcher = url => axios.get(url).then(request => request.data);
+
+fetchRemoteComponent({ url, requires, fetcher });
 ```
 
 ## Adding a Remote Component to a React App
