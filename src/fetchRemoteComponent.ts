@@ -1,8 +1,9 @@
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
 import { RemoteComponent } from "./createRemoteComponent";
-
+import { Fetcher } from "@paciolan/remote-module-loader/dist/models";
 interface FetchRemoteComponentOptions {
   requires: (string) => unknown;
+  fetcher?: Fetcher;
   url: string;
   imports?: string;
 }
@@ -13,10 +14,11 @@ interface FetchRemoteComponent {
 
 export const fetchRemoteComponent: FetchRemoteComponent = ({
   requires,
+  fetcher,
   url,
   imports = "default"
 }) => {
-  const loadRemoteModule = createLoadRemoteModule({ requires });
+  const loadRemoteModule = createLoadRemoteModule({ requires, fetcher });
 
   return loadRemoteModule(url).then(module => {
     const Component = module && module[imports];
