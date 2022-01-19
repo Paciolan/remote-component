@@ -6,17 +6,11 @@ Load a React Component from a URL at runtime.
 
 ## Table of Contents
 
-- [What is a Remote Component?](#what-is-a-remote-component?)
-- [Requirements](#requirements)
+- [What is a Remote Component?](#what-is-a-remote-component)
 - [Install](#install)
 - [Dependencies](#dependencies)
   - [Injecting Dependencies with Webpack](#injecting-dependencies-with-webpack)
   - [Injecting Dependencies without Webpack](#injecting-dependencies-without-webpack)
-- [Importing a Remote Component](#importing-a-remote-component)
-  - [Webpack](#webpack)
-  - [Manual Configuration](#manual-configuration)
-    - [remote-component.config.js](#remote-component.config.js)
-    - [src/RemoteComponent.js](#src/RemoteComponent.js)
 - [Adding a Remote Component to a React App](#adding-a-remote-component-to-a-react-app)
   - [Render Props](#render-props)
   - [React Hooks](#react-hooks)
@@ -24,11 +18,11 @@ Load a React Component from a URL at runtime.
   - [Remote Component Starter Kit](#remote-component-starter-kit)
   - [Creating a Remote Component with Webpack](#creating-a-remote-component-with-webpack)
 - [Create React App (CRA)](<#create-react-app-cra>)
-- [Server Side Rendering with Next.js](#server-side-rendering-with-next.js)
+- [Server Side Rendering with Next.js](#server-side-rendering-with-nextjs)
   - [getServerSideProps](#getserversideprops)
-  - [Calling getServerSideProps from Next.js](#calling-getserversideprops-from-next.js)
+  - [Calling getServerSideProps from Next.js](#calling-getserversideprops-from-nextjs)
 - [How it works](#how-it-works)
-- [Content Security Policy (CSP)](<#content-security-policy-(csp)>)
+- [Content Security Policy (CSP)](#content-security-policy-csp)
 - [Alternatives](#alternatives)
 - [Roadmap](#roadmap)
 - [Caveats](#caveats)
@@ -119,7 +113,7 @@ Then you will change the `import` for `RemoteComponent` to point to this new fil
 import { RemoteComponent } from "./RemoteComponent";
 ```
 
-### Adding a Remote Component to a React App
+## Adding a Remote Component to a React App
 
 Import `RemoteComponent` from either `@paciolan/remote-component` or your custom `./src/RemoteComponent.js` (depending on your setup).
 
@@ -157,7 +151,7 @@ const HelloWorld = props =>
 );
 ```
 
-## React Hooks
+### React Hooks
 
 If you need even more control, you can create a custom `useRemoteComponent` React Hook.
 
