@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
 export interface UseRemoteComponentHook {
-  (url: string): [boolean, Error, (...unknown) => JSX.Element];
+  (url: string, imports?: string): [
+    boolean,
+    Error,
+    (...unknown) => JSX.Element
+  ];
 }
 
 export const createUseRemoteComponent = (
@@ -10,7 +14,10 @@ export const createUseRemoteComponent = (
 ): UseRemoteComponentHook => {
   const loadRemoteModule = createLoadRemoteModule(args);
 
-  const useRemoteComponent: UseRemoteComponentHook = url => {
+  const useRemoteComponent: UseRemoteComponentHook = (
+    url,
+    imports = "default"
+  ) => {
     const [{ loading, err, component }, setState] = useState({
       loading: true,
       err: undefined,
@@ -19,10 +26,12 @@ export const createUseRemoteComponent = (
 
     useEffect(() => {
       let update = setState;
+
       update({ loading: true, err: undefined, component: undefined });
+
       loadRemoteModule(url)
         .then(module =>
-          update({ loading: false, err: undefined, component: module.default })
+          update({ loading: false, err: undefined, component: module[imports] })
         )
         .catch(err => update({ loading: false, err, component: undefined }));
 

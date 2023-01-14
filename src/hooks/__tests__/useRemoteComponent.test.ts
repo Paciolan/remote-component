@@ -13,7 +13,8 @@ const waitNextFrame = () => new Promise(resolve => setTimeout(resolve));
 
 describe("effects/useRemoteComponent", () => {
   const invalidModule = "'";
-  const validModule = 'Object.assign(exports, { default: "SUCCESS!" })';
+  const validModule =
+    'Object.assign(exports, { default: "SUCCESS!", named: "ALSO SUCCESS!" })';
 
   let state = undefined;
 
@@ -46,6 +47,17 @@ describe("effects/useRemoteComponent", () => {
     useRemoteComponent("http://valid.url");
     await waitNextFrame();
     const actual = useRemoteComponent("http://valid.url");
+    expect(actual).toMatchObject(expected);
+  });
+
+  test("Sets component state when success with named imports", async () => {
+    const expected = [false, undefined, "ALSO SUCCESS!"];
+    const useRemoteComponent = createUseRemoteComponent({
+      fetcher: mockFetcher
+    });
+    useRemoteComponent("http://valid.url", "named");
+    await waitNextFrame();
+    const actual = useRemoteComponent("http://valid.url", "named");
     expect(actual).toMatchObject(expected);
   });
 
