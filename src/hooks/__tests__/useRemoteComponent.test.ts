@@ -1,64 +1,43 @@
-/**
- * NOTE: This is the OLD style testing where we are mocking react (BAD)
- *       Look at useRemoteComponent2.test.js for the new style.
- */
+import { renderHook } from "@testing-library/react-hooks";
 import { createUseRemoteComponent } from "../useRemoteComponent";
-import React from "react";
-
-jest.mock("react", () => ({
-  useEffect: jest.fn(f => f())
-}));
-
-const waitNextFrame = () => new Promise(resolve => setTimeout(resolve));
 
 describe("effects/useRemoteComponent", () => {
-  const invalidModule = "'";
   const validModule =
     'Object.assign(exports, { default: "SUCCESS!", named: "ALSO SUCCESS!" })';
 
-  let state = undefined;
-
-  beforeAll(() => {
-    state = undefined;
-    React.useState = jest
-      .fn()
-      .mockImplementation(s => [state || s, s => (state = s)]);
-  });
-
   const mockFetcher = url =>
     url === "http://valid.url"
-      ? Promise.resolve(validModule)
-      : Promise.resolve(invalidModule);
+      ? new Promise(resolve => {
+          setTimeout(() => resolve(validModule), 200);
+        })
+      : new Promise((_, reject) => {
+          setTimeout(
+            () => reject(SyntaxError("Invalid or unexpected token")),
+            100
+          );
+        });
+
+  const useRemoteComponent = createUseRemoteComponent({
+    fetcher: mockFetcher
+  });
 
   test("Sets loading state on initial", async () => {
     const expected = [true, undefined, undefined];
-    const useRemoteComponent = createUseRemoteComponent({
-      fetcher: mockFetcher
+    const all = renderHook((...props) => useRemoteComponent(...props), {
+      initialProps: "http://valid.url"
     });
-    const actual = useRemoteComponent("http://valid.url");
-    expect(actual).toMatchObject(expected);
+    const { result } = all;
+    expect(result.current).toStrictEqual(expected);
   });
 
   test("Sets component state when success", async () => {
     const expected = [false, undefined, "SUCCESS!"];
-    const useRemoteComponent = createUseRemoteComponent({
-      fetcher: mockFetcher
+    const all = renderHook((...props) => useRemoteComponent(...props), {
+      initialProps: "http://valid.url"
     });
-    useRemoteComponent("http://valid.url");
-    await waitNextFrame();
-    const actual = useRemoteComponent("http://valid.url");
-    expect(actual).toMatchObject(expected);
-  });
-
-  test("Sets component state when success with named imports", async () => {
-    const expected = [false, undefined, "ALSO SUCCESS!"];
-    const useRemoteComponent = createUseRemoteComponent({
-      fetcher: mockFetcher
-    });
-    useRemoteComponent("http://valid.url", "named");
-    await waitNextFrame();
-    const actual = useRemoteComponent("http://valid.url", "named");
-    expect(actual).toMatchObject(expected);
+    const { waitForNextUpdate, result } = all;
+    await waitForNextUpdate();
+    expect(result.current).toStrictEqual(expected);
   });
 
   test("Sets err state when failure", async () => {
@@ -67,12 +46,34 @@ describe("effects/useRemoteComponent", () => {
       SyntaxError("Invalid or unexpected token"),
       undefined
     ];
-    const useRemoteComponent = createUseRemoteComponent({
-      fetcher: mockFetcher
+    const all = renderHook((...props) => useRemoteComponent(...props), {
+      initialProps: "http://invalid.url"
     });
-    useRemoteComponent("http://invalid.url");
-    await waitNextFrame();
-    const actual = useRemoteComponent("http://invalid.url");
-    expect(actual).toMatchObject(expected);
+    const { waitForNextUpdate, result } = all;
+    await waitForNextUpdate();
+    expect(result.current).toStrictEqual(expected);
+  });
+
+  test("Unmount prevents update state", async () => {
+    const expected = [false, undefined, "SUCCESS!"];
+    const all = renderHook((...props) => useRemoteComponent(...props), {
+      initialProps: "http://invalid.url"
+    });
+    const { rerender, waitForNextUpdate, result } = all;
+    rerender("http://valid.url");
+    await waitForNextUpdate();
+
+    expect(result.current).toStrictEqual(expected);
+  });
+
+  test("Sets component state when success with named imports", async () => {
+    const expected = [false, undefined, "ALSO SUCCESS!"];
+    const all = renderHook(() =>
+      useRemoteComponent("http://valid.url", "named")
+    );
+    const { waitForNextUpdate, result } = all;
+    await waitForNextUpdate();
+
+    expect(result.current).toStrictEqual(expected);
   });
 });
