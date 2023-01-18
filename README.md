@@ -191,6 +191,9 @@ const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/
 
 const HelloWorld = props => {
   const [loading, err, Component] = useRemoteComponent(url);
+  
+  // To use a named import, pass the name in as the second argument.
+  // const [loading, err, Component] = useRemoteComponent(url, "customImportName");
 
   if (loading) {
     return <div>Loading...</div>;
