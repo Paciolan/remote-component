@@ -192,8 +192,27 @@ const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/
 const HelloWorld = props => {
   const [loading, err, Component] = useRemoteComponent(url);
   
-  // To use a named import, pass the name in as the second argument.
-  // const [loading, err, Component] = useRemoteComponent(url, "customImportName");
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (err != null) {
+    return <div>Unknown Error: {err.toString()}</div>;
+  }
+
+  return <Component {...props} />;
+};
+```
+
+Named import example
+
+```javascript
+import { useRemoteComponent } from "./useRemoteComponent";
+
+const url = "https://raw.githubusercontent.com/Paciolan/remote-component/master/examples/remote-components/HelloWorld.js"; // prettier-ignore
+
+const HelloWorld = props => {
+  const [loading, err, Component] = useRemoteComponent(url, "customImportName");
 
   if (loading) {
     return <div>Loading...</div>;
