@@ -24,8 +24,7 @@
     "test": "jest",
     "test:changed": "npm run test -- --changedSince HEAD",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --fix",
     "watch": "npm run build -- --watch"
   },
   "dependencies": {
