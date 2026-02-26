@@ -32,7 +32,7 @@
     "test": "cross-env NODE_ENV=test jest",
     "test:changed": "npm run test -- --changedSince HEAD",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "eslint ."
+    "lint": "eslint . --fix"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",
