@@ -3,6 +3,7 @@ import memoize from "./memoize";
 import nodeFetcher from "./nodeFetcher";
 import xmlHttpRequestFetcher from "./xmlHttpRequestFetcher/index";
 
+/* istanbul ignore next - environment detection */
 const isBrowser =
   typeof window !== "undefined" && typeof window.document !== "undefined";
 

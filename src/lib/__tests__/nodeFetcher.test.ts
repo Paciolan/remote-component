@@ -6,6 +6,7 @@ jest.mock("http", () => {
   return {
     get: jest.fn((url, callback) => {
       let onErrorCallback;
+      const isPrematureClose = url === "http://premature-close.url";
 
       const res = {
         on: jest.fn((eventName, fn) => {
@@ -16,16 +17,27 @@ jest.mock("http", () => {
             return res;
           }
           if (eventName === "data") {
-            fn("SUCC");
-            fn("ESS");
+            if (isPrematureClose) {
+              fn("PAR");
+            } else {
+              fn("SUCC");
+              fn("ESS");
+            }
           } else if (eventName === "end") {
-            fn();
+            if (!isPrematureClose) {
+              fn();
+            }
+          } else if (eventName === "close") {
+            if (isPrematureClose) {
+              fn();
+            }
           }
 
           return res;
         }),
-        statusCode: url === "http://invalid.url" ? InternalServerError: OK,
-        statusMessage: url === "http://invalid.url" ? "Internal Server Error": "OK"
+        statusCode: url === "http://invalid.url" ? InternalServerError : OK,
+        statusMessage: url === "http://invalid.url" ? "Internal Server Error" : "OK",
+        complete: !isPrematureClose
       };
       setTimeout(() => callback(res), 0);
       return {
@@ -103,4 +115,13 @@ describe("lib/nodeFetcher", () => {
     const actual = nodeFetcher("http://invalid.url");
     return expect(actual).rejects.toStrictEqual(expected);
   });
+
+  test("premature close rejects", () => {
+    expect.assertions(1);
+    const expected = new Error(
+      "Connection closed before response was complete (http://premature-close.url)"
+    );
+    const actual = nodeFetcher("http://premature-close.url");
+    return expect(actual).rejects.toStrictEqual(expected);
+  }, 2000);
 });

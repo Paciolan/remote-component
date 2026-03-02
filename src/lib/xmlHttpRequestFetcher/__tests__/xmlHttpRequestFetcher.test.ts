@@ -3,7 +3,7 @@ import { OPENED, UNSENT, DONE } from "../readyState";
 import { OK, InternalServerError } from "../../status";
 
 describe("lib/xmlHttpRequestFetcher", () => {
-  const originalXmlHttpRequest = window.XMLHttpRequest;
+  const originalXmlHttpRequest = (global as any).XMLHttpRequest;
 
   let mockXhrRequest;
 

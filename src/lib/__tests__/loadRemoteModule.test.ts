@@ -25,11 +25,18 @@ const mockFetcher = url =>
     : url === "http://namedexports.url" ? Promise.resolve(namedExportsModule)
     : Promise.resolve(invalidModule); // prettier-ignore
 
-jest.mock("../xmlHttpRequestFetcher", () => ({
-  default: jest.fn().mockImplementation(url => mockFetcher(url))
-}));
+jest.mock("../xmlHttpRequestFetcher", () => {
+  // Set window before loadRemoteModule.ts evaluates isBrowser so
+  // xmlHttpRequestFetcher is selected as the default fetcher.
+  (global as any).window = { document: {} };
+  return { default: jest.fn().mockImplementation(url => mockFetcher(url)) };
+});
 
 describe("lib/loadRemoteModule", () => {
+  afterAll(() => {
+    delete (global as any).window;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
