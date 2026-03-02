@@ -46,6 +46,13 @@ const nodeFetcher: Fetcher = url =>
 
       // called when the complete response is received.
       res.on("end", () => resolve(data));
+
+      // called when the connection is closed.
+      res.on("close", () => {
+        if (!res.complete) {
+          reject(new Error(`Connection closed before response was complete (${url})`));
+        }
+      });
     }).on("error", reject);
   });
 
