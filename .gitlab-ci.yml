@@ -23,5 +23,16 @@ Publish:
   # https://gitlabdev.paciolan.info/development/tools/gitlab-ci-templates/blob/master/nodejs/publish.yml
   extends: .nodejs_publish_semantic_release
   script:
+    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
     - node -e "require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), {repository:{type:'git',url:'$GITHUB_URL'}}), null, 2), 'utf8')"
-    - semantic-release
+    - |
+      HUSKY=0 npx \
+        --package semantic-release@17 \
+        --package @semantic-release/changelog@5 \
+        --package @semantic-release/git@9 \
+        --package @semantic-release/exec@5 \
+        --package @semantic-release/gitlab@6 \
+        --package @semantic-release/release-notes-generator@6 \
+        --package @semantic-release/commit-analyzer@6 \
+        semantic-release
+
