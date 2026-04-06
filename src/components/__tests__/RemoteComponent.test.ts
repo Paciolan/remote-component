@@ -11,7 +11,7 @@ describe("components/RemoteComponent", () => {
   });
 
   test("getDependencies is lazy", () => {
-    expect(getDependencies).toBeCalledTimes(0);
+    expect(getDependencies).toHaveBeenCalledTimes(0);
   });
 
   test("is function", () => {

@@ -12,13 +12,17 @@ interface GetDependencies {
   (): { [prop: string]: unknown };
 }
 
-const cannotFindModule = err =>
+const cannotFindModule = (err: { message?: string }) =>
   err &&
   typeof err.message === "string" &&
   err.message.indexOf("Cannot find module") > -1;
 
-const isConfigInResolve = config =>
-  typeof config === "object" && "remote-component.config.js" in config;
+const isConfigInResolve = (
+  config: unknown
+): config is Record<string, unknown> =>
+  typeof config === "object" &&
+  config !== null &&
+  "remote-component.config.js" in config;
 
 /**
  * Makes sure the config contains remote-component.config.js.
@@ -40,9 +44,9 @@ export const ensureRemoteComponentConfig: EnsureRemoteComponentConfig = ({
 
 export const getDependencies: GetDependencies = () => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     return ensureRemoteComponentConfig(require("remote-component.config.js"));
-  } catch (err) {
+  } catch (err: any) {
     // istanbul ignore next: This is just too impossible to test
     if (!cannotFindModule(err)) {
       throw err;

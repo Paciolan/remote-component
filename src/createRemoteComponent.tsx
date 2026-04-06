@@ -3,23 +3,23 @@ import React from "react";
 import { createUseRemoteComponent } from "./hooks/useRemoteComponent";
 
 export interface RenderFunctionProperties {
-  err: Error;
-  Component: (...unknown: any[]) => JSX.Element;
+  err: Error | undefined;
+  Component: ((...args: any[]) => React.JSX.Element) | undefined;
 }
 
 export interface RenderFunction {
-  (render: RenderFunctionProperties): JSX.Element;
+  (render: RenderFunctionProperties): React.JSX.Element;
 }
 
 export interface RemoteComponentOptions {
   url: string;
-  fallback?: JSX.Element;
+  fallback?: React.JSX.Element | null;
   render?: RenderFunction;
   [props: string]: unknown;
 }
 
 export interface RemoteComponent {
-  (options: RemoteComponentOptions): JSX.Element;
+  (options: RemoteComponentOptions): React.JSX.Element | null;
 }
 
 export const createRemoteComponent = (

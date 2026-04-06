@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { createRemoteComponent } from "../createRemoteComponent";
-import { render } from "enzyme";
+import { render } from "@testing-library/react";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 describe("createRemoteComponent", () => {
@@ -18,9 +17,8 @@ describe("createRemoteComponent", () => {
       .spyOn(React, "useState")
       .mockImplementation((() => [{ loading: true }]) as any);
     jest.spyOn(React, "useEffect").mockImplementation(noop);
-    const expected = "";
-    const actual = render(<RemoteComponent url="http://valid.url" />);
-    expect(actual.text()).toBe(expected);
+    const { container } = render(<RemoteComponent url="http://valid.url" />);
+    expect(container.textContent).toBe("");
   });
 
   test("when loading fallback is rendered", async () => {
@@ -30,10 +28,10 @@ describe("createRemoteComponent", () => {
     jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Loading...";
     const fallback = <div>{expected}</div>;
-    const actual = render(
+    const { container } = render(
       <RemoteComponent url="http://valid.url" fallback={fallback} />
     );
-    expect(actual.text()).toBe(expected);
+    expect(container.textContent).toBe(expected);
   });
 
   test("when prop render exists it is called", async () => {
@@ -53,10 +51,10 @@ describe("createRemoteComponent", () => {
             : "FAIL"}
         </div>
       ));
-    const actual = render(
+    const { container } = render(
       <RemoteComponent url="http://valid.url" render={mockRender} />
     );
-    expect(actual.text()).toBe(expected);
+    expect(container.textContent).toBe(expected);
   });
 
   test("when no Component error is rendered", async () => {
@@ -65,8 +63,8 @@ describe("createRemoteComponent", () => {
       .mockImplementation((() => [{ loading: false }]) as any);
     jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Unknown Error: UNKNOWN";
-    const actual = render(<RemoteComponent url="http://valid.url" />);
-    expect(actual.text()).toBe(expected);
+    const { container } = render(<RemoteComponent url="http://valid.url" />);
+    expect(container.textContent).toBe(expected);
   });
 
   test("when `err` error is rendered", async () => {
@@ -77,19 +75,21 @@ describe("createRemoteComponent", () => {
       ]) as any);
     jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Unknown Error: Somethin aint right";
-    const actual = render(<RemoteComponent url="http://valid.url" />);
-    expect(actual.text()).toBe(expected);
+    const { container } = render(<RemoteComponent url="http://valid.url" />);
+    expect(container.textContent).toBe(expected);
   });
 
   test("RemoteComponent renders", async () => {
-    jest.spyOn(React, "useState").mockImplementation((() => [
-      { loading: false, component: ({ msg }) => <div>Message: {msg}</div> } // eslint-disable-line
-    ]) as any);
+    jest
+      .spyOn(React, "useState")
+      .mockImplementation((() => [
+        { loading: false, component: ({ msg }) => <div>Message: {msg}</div> }
+      ]) as any);
     jest.spyOn(React, "useEffect").mockImplementation(noop);
     const expected = "Message: SUCCESS!";
-    const actual = render(
+    const { container } = render(
       <RemoteComponent url="http://valid.url" msg="SUCCESS!" />
     );
-    expect(actual.text()).toBe(expected);
+    expect(container.textContent).toBe(expected);
   });
 });
