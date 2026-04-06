@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 import { createUseRemoteComponent } from "../useRemoteComponent";
 
 describe("effects/useRemoteComponent", () => {
@@ -23,21 +23,20 @@ describe("effects/useRemoteComponent", () => {
 
   test("Sets loading state on initial", async () => {
     const expected = [true, undefined, undefined];
-    const all = renderHook((...props) => useRemoteComponent(...props), {
+    const { result } = renderHook((...props) => useRemoteComponent(...props), {
       initialProps: "http://valid.url"
     });
-    const { result } = all;
     expect(result.current).toStrictEqual(expected);
   });
 
   test("Sets component state when success", async () => {
     const expected = [false, undefined, "SUCCESS!"];
-    const all = renderHook((...props) => useRemoteComponent(...props), {
+    const { result } = renderHook((...props) => useRemoteComponent(...props), {
       initialProps: "http://valid.url"
     });
-    const { waitForNextUpdate, result } = all;
-    await waitForNextUpdate();
-    expect(result.current).toStrictEqual(expected);
+    await waitFor(() => {
+      expect(result.current).toStrictEqual(expected);
+    });
   });
 
   test("Sets err state when failure", async () => {
@@ -46,34 +45,35 @@ describe("effects/useRemoteComponent", () => {
       SyntaxError("Invalid or unexpected token"),
       undefined
     ];
-    const all = renderHook((...props) => useRemoteComponent(...props), {
+    const { result } = renderHook((...props) => useRemoteComponent(...props), {
       initialProps: "http://invalid.url"
     });
-    const { waitForNextUpdate, result } = all;
-    await waitForNextUpdate();
-    expect(result.current).toStrictEqual(expected);
+    await waitFor(() => {
+      expect(result.current).toStrictEqual(expected);
+    });
   });
 
   test("Unmount prevents update state", async () => {
     const expected = [false, undefined, "SUCCESS!"];
-    const all = renderHook((...props) => useRemoteComponent(...props), {
-      initialProps: "http://invalid.url"
-    });
-    const { rerender, waitForNextUpdate, result } = all;
+    const { result, rerender } = renderHook(
+      (...props) => useRemoteComponent(...props),
+      {
+        initialProps: "http://invalid.url"
+      }
+    );
     rerender("http://valid.url");
-    await waitForNextUpdate();
-
-    expect(result.current).toStrictEqual(expected);
+    await waitFor(() => {
+      expect(result.current).toStrictEqual(expected);
+    });
   });
 
   test("Sets component state when success with named imports", async () => {
     const expected = [false, undefined, "ALSO SUCCESS!"];
-    const all = renderHook(() =>
+    const { result } = renderHook(() =>
       useRemoteComponent("http://valid.url", "named")
     );
-    const { waitForNextUpdate, result } = all;
-    await waitForNextUpdate();
-
-    expect(result.current).toStrictEqual(expected);
+    await waitFor(() => {
+      expect(result.current).toStrictEqual(expected);
+    });
   });
 });

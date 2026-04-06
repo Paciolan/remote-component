@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
 export interface UseRemoteComponentHook {
-  (url: string, imports?: string): [
+  (
+    url: string,
+    imports?: string
+  ): [
     boolean,
-    Error,
-    (...unknown) => JSX.Element
+    Error | undefined,
+    ((...args: unknown[]) => React.JSX.Element) | undefined
   ];
 }
 
 export const createUseRemoteComponent = (
-  args?: unknown
+  args?: Parameters<typeof createLoadRemoteModule>[0]
 ): UseRemoteComponentHook => {
   const loadRemoteModule = createLoadRemoteModule(args);
 

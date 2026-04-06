@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchRemoteComponent } from "../fetchRemoteComponent";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 jest.mock("@paciolan/remote-module-loader", () => () => async () => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const defaultComponent = () => {};
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   const alternateComponent = () => {};
   (alternateComponent as any).getServerSideProps = () => {
     return { abc: 123 };

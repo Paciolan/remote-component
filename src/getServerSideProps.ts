@@ -2,7 +2,7 @@ import createLoadRemoteModule from "@paciolan/remote-module-loader";
 
 interface GetServerSidePropsOptions {
   url: string;
-  requires: (string) => unknown;
+  requires: (name: string) => unknown;
   context: unknown;
   imports?: string;
 }

@@ -7,28 +7,30 @@ export interface DependencyTable {
 }
 
 export interface CreateRequires {
-  (dependencies?: () => DependencyTable): (string) => unknown;
+  (dependencies?: () => DependencyTable): (name: string) => unknown;
 }
 
-const sanitizeDependencies = dependencies =>
-  typeof dependencies === "function" ? dependencies() : dependencies || {};
+const sanitizeDependencies = (
+  dependencies: (() => DependencyTable) | DependencyTable | undefined
+) => (typeof dependencies === "function" ? dependencies() : dependencies || {});
 
 export const createRequires: CreateRequires = dependencies => {
   let isSanitized = false;
+  let resolved: DependencyTable;
 
   return name => {
     if (!isSanitized) {
       // note: needs to happen inside the inner function for the laziness to work.
-      dependencies = sanitizeDependencies(dependencies);
+      resolved = sanitizeDependencies(dependencies) as DependencyTable;
       isSanitized = true;
     }
 
-    if (!(name in dependencies)) {
+    if (!(name in resolved)) {
       throw new Error(
         `Could not require '${name}'. '${name}' does not exist in dependencies.`
       );
     }
 
-    return dependencies[name];
+    return resolved[name];
   };
 };

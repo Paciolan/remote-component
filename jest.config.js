@@ -1,5 +1,5 @@
-/* eslint-env node */
 module.exports = {
+  testEnvironment: "jsdom",
   collectCoverageFrom: ["./src/**/*.ts"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   coverageThreshold: {
