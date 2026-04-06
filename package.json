@@ -24,7 +24,8 @@
     "test": "jest",
     "test:changed": "npm run test -- --changedSince HEAD",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "watch": "npm run build -- --watch",
     "prepare": "husky"
   },
